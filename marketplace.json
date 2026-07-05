@@ -1,0 +1,11 @@
+{
+  "name": "jfrog-codex-plugins",
+  "interface": { "displayName": "JFrog Plugins for Codex" },
+  "plugins": [
+    {
+      "name": "jfrog",
+      "source": { "source": "local", "path": "./" },
+      "category": "DevOps"
+    }
+  ]
+}

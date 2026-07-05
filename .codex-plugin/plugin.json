@@ -1,0 +1,15 @@
+{
+  "name": "jfrog",
+  "version": "0.1.0",
+  "description": "JFrog skills for Codex — interact with the JFrog Platform.",
+  "author": { "name": "JFrog", "email": "carmith@jfrog.com" },
+  "license": "Apache-2.0",
+  "repository": "https://github.com/michaelfrog/codex-jfrog-plugin",
+  "keywords": ["jfrog", "artifactory", "codex", "plugin", "skills"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "JFrog",
+    "shortDescription": "JFrog Platform skills for Codex",
+    "category": "DevOps"
+  }
+}
