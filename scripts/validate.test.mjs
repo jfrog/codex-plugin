@@ -32,6 +32,8 @@ test('hasNonEmptyDescription accepts inline and block scalars, rejects missing/e
   assert.equal(hasNonEmptyDescription('description: >-\n  wrapped text'), true);
   assert.equal(hasNonEmptyDescription('name: x'), false);
   assert.equal(hasNonEmptyDescription('description:\n'), false);
+  assert.equal(hasNonEmptyDescription('description: >-\n'), false);
+  assert.equal(hasNonEmptyDescription('description: |\n'), false);
 });
 
 test('validateSkillDir passes a well-formed skill', () => {
@@ -45,6 +47,13 @@ test('validateSkillDir flags a name/dir mismatch and missing description', () =>
   writeSkill(root, 'jfrog', '---\nname: wrong\n---\nbody');
   const errors = validateSkillDir(root, 'jfrog');
   assert.ok(errors.some((e) => e.includes('name')));
+  assert.ok(errors.some((e) => e.includes('description')));
+});
+
+test('validateSkillDir flags an empty block-scalar description', () => {
+  const root = mkdtempSync(join(tmpdir(), 'skills-'));
+  writeSkill(root, 'jfrog', '---\nname: jfrog\ndescription: >-\n---\nbody');
+  const errors = validateSkillDir(root, 'jfrog');
   assert.ok(errors.some((e) => e.includes('description')));
 });
 
