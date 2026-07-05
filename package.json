@@ -1,0 +1,13 @@
+{
+  "name": "codex-jfrog-plugin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "JFrog skills plugin for OpenAI Codex (Phase 1: skills only).",
+  "license": "Apache-2.0",
+  "scripts": {
+    "sync-skills": "node scripts/sync-skills.mjs",
+    "validate": "node scripts/validate.mjs",
+    "test": "node --test scripts/validate.test.mjs"
+  }
+}
