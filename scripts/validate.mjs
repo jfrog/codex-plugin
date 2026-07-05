@@ -82,7 +82,7 @@ function main() {
   for (const d of dirs) errors.push(...validateSkillDir(skillsRoot, d));
 
   errors.push(...validateManifest(JSON.parse(readFileSync(join(root, '.codex-plugin/plugin.json'), 'utf8'))));
-  errors.push(...validateMarketplace(JSON.parse(readFileSync(join(root, 'marketplace.json'), 'utf8'))));
+  errors.push(...validateMarketplace(JSON.parse(readFileSync(join(root, '.agents/plugins/marketplace.json'), 'utf8'))));
 
   if (errors.length) {
     console.error('VALIDATION FAILED:\n' + errors.map((e) => ' - ' + e).join('\n'));
