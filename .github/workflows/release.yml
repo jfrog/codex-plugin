@@ -1,0 +1,32 @@
+name: Release
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Verify tag matches plugin.json + package.json version
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          PJ=$(jq -r .version .codex-plugin/plugin.json)
+          PK=$(jq -r .version package.json)
+          echo "tag=$TAG plugin.json=$PJ package.json=$PK"
+          test "$TAG" = "$PJ" || { echo "::error::tag v$TAG != plugin.json version $PJ"; exit 1; }
+          test "$TAG" = "$PK" || { echo "::error::tag v$TAG != package.json version $PK"; exit 1; }
+      - name: Validate before release
+        run: |
+          node --test scripts/validate.test.mjs
+          node scripts/validate.mjs
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --generate-notes

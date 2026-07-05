@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -16,6 +19,12 @@ jobs:
         run: node --test scripts/validate.test.mjs
       - name: Validate manifests + skills
         run: node scripts/validate.mjs
+      - name: Version consistency (plugin.json == package.json)
+        run: |
+          PJ=$(jq -r .version .codex-plugin/plugin.json)
+          PK=$(jq -r .version package.json)
+          echo "plugin.json=$PJ package.json=$PK"
+          test "$PJ" = "$PK" || { echo "::error::version mismatch: plugin.json=$PJ package.json=$PK"; exit 1; }
       - name: Vendor-sync drift check
         run: |
           node scripts/sync-skills.mjs
