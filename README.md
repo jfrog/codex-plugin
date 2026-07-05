@@ -15,7 +15,7 @@ Delivers the JFrog skills to OpenAI Codex. **Phase 1: skills only** (no MCP yet)
 - `jfrog` — interact with the JFrog Platform (CLI, MCP, REST/GraphQL).
 - `jfrog-package-safety-and-download` — package safety checks and Artifactory-routed downloads.
 
-Skills are vendored from [`jfrog/jfrog-skills`](https://github.com/jfrog/jfrog-skills), pinned in `sync-skills-vendor.json`. Bump the pin and run `npm run sync-skills` to update.
+Skills are vendored from [`jfrog/jfrog-skills`](https://github.com/jfrog/jfrog-skills), pinned in `scripts/sync-skills-vendor.json`. Bump the pin and run `npm run sync-skills` to update.
 
 ## Development
 

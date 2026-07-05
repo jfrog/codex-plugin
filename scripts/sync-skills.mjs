@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Vendors skill content from jfrog/jfrog-skills into this plugin.
-// Run when bumping the pin in sync-skills-vendor.json:  node scripts/sync-skills.mjs
+// Run when bumping the pin in scripts/sync-skills-vendor.json:  node scripts/sync-skills.mjs
 import { promises as fs, createWriteStream } from "node:fs";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
@@ -44,7 +44,7 @@ async function copyPath(fromDir, toDir, rel) {
 async function main() {
   const scriptDir = path.dirname(fileURLToPath(import.meta.url));
   const repoRoot = path.resolve(scriptDir, "..");
-  const vendorPath = path.join(repoRoot, "sync-skills-vendor.json");
+  const vendorPath = path.join(scriptDir, "sync-skills-vendor.json");
   if (!(await fileExists(vendorPath))) throw new Error(`missing ${vendorPath}`);
   const { repo, pin, paths } = await readJson(vendorPath);
   if (!repo || !pin || !Array.isArray(paths) || paths.length === 0)
