@@ -5,8 +5,8 @@ Delivers the JFrog skills to OpenAI Codex. **Phase 1: skills only** (no MCP yet)
 ## Install (git marketplace)
 
 ```
-/plugin marketplace add michaelfrog/codex-jfrog-plugin
-/plugin install jfrog@jfrog-codex-plugins
+/plugin marketplace add jfrog/codex-plugin
+/plugin install jfrog@codex-plugin
 /reload-plugins
 ```
 

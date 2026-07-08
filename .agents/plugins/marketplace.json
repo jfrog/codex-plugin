@@ -1,5 +1,5 @@
 {
-  "name": "jfrog-codex-plugins",
+  "name": "codex-plugin",
   "interface": { "displayName": "JFrog Plugins for Codex" },
   "plugins": [
     {

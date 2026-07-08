@@ -4,3 +4,6 @@ node_modules/
 .env
 .env.local
 .npmrc
+
+# local superpowers / SDD working data — never part of the published plugin
+.superpowers/

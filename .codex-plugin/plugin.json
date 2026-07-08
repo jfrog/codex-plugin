@@ -4,7 +4,7 @@
   "description": "JFrog skills for Codex — interact with the JFrog Platform.",
   "author": { "name": "JFrog", "email": "michaelto@jfrog.com" },
   "license": "Apache-2.0",
-  "repository": "https://github.com/michaelfrog/codex-jfrog-plugin",
+  "repository": "https://github.com/jfrog/codex-plugin",
   "keywords": ["jfrog", "artifactory", "codex", "plugin", "skills"],
   "skills": "./skills/",
   "interface": {
