@@ -1,0 +1,23 @@
+JFrog codex-plugin
+Copyright (c) 2026 JFrog Ltd.
+
+This product includes software developed by JFrog Ltd.
+(https://jfrog.com/).
+
+This product vendors skill content from jfrog/jfrog-skills
+(https://github.com/jfrog/jfrog-skills), pinned per
+scripts/sync-skills-vendor.json. See that repository for its
+own license and copyright terms.
+
+--------------------------------------------------------------------
+Third-Party Software Notices
+--------------------------------------------------------------------
+
+This project has no third-party runtime dependencies
+(see package.json). If dependencies are added in the future,
+list each here as:
+
+  <package-name> (<version>)
+  License: <SPDX-ID>
+  Homepage: <url>
+  Copyright: <copyright holder line from the upstream project>
