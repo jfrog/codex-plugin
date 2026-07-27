@@ -51,7 +51,30 @@ export function validateManifest(obj) {
   if (obj?.skills != null && obj.skills !== './skills/') {
     errors.push('plugin.json: "skills" must be "./skills/"');
   }
-  if (obj?.mcpServers != null) errors.push('plugin.json: "mcpServers" must not be set in Phase 1');
+  if (obj?.mcpServers != null && obj.mcpServers !== './.mcp.json') {
+    errors.push('plugin.json: "mcpServers" must be "./.mcp.json"');
+  }
+  return errors;
+}
+
+// Validates the bundled MCP config referenced by plugin.json's "mcpServers".
+// Accepts a direct server map ({ "<name>": {...} }) or a wrapped object
+// ({ "mcp_servers": {...} }) — both forms Codex supports. Each server must
+// declare a "url" (streamable HTTP) or a "command" (stdio).
+export function validateMcp(obj) {
+  if (obj == null || typeof obj !== 'object' || Array.isArray(obj)) {
+    return ['.mcp.json: must be a JSON object'];
+  }
+  const map = obj.mcp_servers && typeof obj.mcp_servers === 'object' ? obj.mcp_servers : obj;
+  const names = Object.keys(map);
+  if (names.length === 0) return ['.mcp.json: no MCP servers defined'];
+  const errors = [];
+  for (const n of names) {
+    const s = map[n];
+    if (s == null || typeof s !== 'object' || (s.url == null && s.command == null)) {
+      errors.push(`.mcp.json: server "${n}" must set "url" or "command"`);
+    }
+  }
   return errors;
 }
 
@@ -82,7 +105,16 @@ function main() {
   if (dirs.length === 0) errors.push('skills/: no skill directories found');
   for (const d of dirs) errors.push(...validateSkillDir(skillsRoot, d));
 
-  errors.push(...validateManifest(JSON.parse(readFileSync(join(root, '.codex-plugin/plugin.json'), 'utf8'))));
+  const manifest = JSON.parse(readFileSync(join(root, '.codex-plugin/plugin.json'), 'utf8'));
+  errors.push(...validateManifest(manifest));
+  if (manifest?.mcpServers) {
+    const mcpPath = join(root, '.mcp.json');
+    if (!existsSync(mcpPath)) {
+      errors.push('.mcp.json: referenced by plugin.json but not found');
+    } else {
+      errors.push(...validateMcp(JSON.parse(readFileSync(mcpPath, 'utf8'))));
+    }
+  }
   errors.push(...validateMarketplace(JSON.parse(readFileSync(join(root, '.agents/plugins/marketplace.json'), 'utf8'))));
 
   if (errors.length) {

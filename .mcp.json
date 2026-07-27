@@ -1,0 +1,5 @@
+{
+  "jfrog": {
+    "url": "https://<SERVER_ID>.jfrog.io/mcp"
+  }
+}
