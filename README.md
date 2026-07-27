@@ -15,9 +15,9 @@ Delivers the JFrog skills **and the JFrog MCP server** to OpenAI Codex.
 The plugin bundles the `jfrog` MCP server ([`.mcp.json`](.mcp.json)). After
 installing, do two things:
 
-1. **Set your host.**
-   (`~/.codex/plugins/.../codex-plugin/jfrog/<version>/.mcp.json`) and replace
-   `<SERVER_ID>` with your JFrog subdomain - for `https://mycompany.jfrog.io`
+1. **Set your host.** Find the install path with `codex plugin list` (the
+   `jfrog@codex-plugin` row) and edit `<PATH>/.mcp.json`. Replace `<SERVER_ID>`
+   in the `url` with your JFrog subdomain - for `https://mycompany.jfrog.io`
    use `mycompany` (self-hosted: replace the whole host).
 2. **Log in (OAuth).** Run `codex mcp login jfrog` and finish the browser
    sign-in.
