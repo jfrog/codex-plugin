@@ -16,9 +16,9 @@ The plugin bundles the `jfrog` MCP server ([`.mcp.json`](.mcp.json)). After
 installing, do two things:
 
 1. **Set your host.** Find the install path with `codex plugin list` (the
-   `jfrog@codex-plugin` row) and edit `<PATH>/.mcp.json`. Replace `<SERVER_ID>`
-   in the `url` with your JFrog subdomain - for `https://mycompany.jfrog.io`
-   use `mycompany` (self-hosted: replace the whole host).
+   `jfrog@codex-plugin` row) and edit `<PATH>/.mcp.json`. Replace
+   `<JFROG_PLATFORM_URL>` in the `url` with your full JFrog Platform host - e.g.
+   `mycompany.jfrog.io` (or your self-hosted / custom domain).
 2. **Log in (OAuth).** Run `codex mcp login jfrog` and finish the browser
    sign-in.
 
