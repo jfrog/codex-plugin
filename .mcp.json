@@ -1,0 +1,5 @@
+{
+  "jfrog": {
+    "url": "https://<JFROG_PLATFORM_URL>/mcp"
+  }
+}

@@ -11,6 +11,7 @@ import {
   validateSkillDir,
   validateManifest,
   validateMarketplace,
+  validateMcp,
 } from './validate.mjs';
 
 function writeSkill(root, dir, body) {
@@ -58,16 +59,28 @@ test('validateSkillDir flags an empty block-scalar description', () => {
   assert.ok(errors.some((e) => e.includes('description')));
 });
 
-test('validateManifest requires fields, the skills pointer, and forbids mcpServers (Phase 1)', () => {
+test('validateManifest requires fields, the skills pointer, and accepts the mcpServers pointer', () => {
   assert.deepEqual(
     validateManifest({ name: 'jfrog', version: '0.1.0', description: 'd', skills: './skills/' }),
     []
   );
   assert.ok(validateManifest({ name: 'jfrog' }).some((e) => e.includes('version')));
+  assert.deepEqual(
+    validateManifest({ name: 'jfrog', version: '0.1.0', description: 'd', skills: './skills/', mcpServers: './.mcp.json' }),
+    []
+  );
   assert.ok(
-    validateManifest({ name: 'jfrog', version: '0.1.0', description: 'd', skills: './skills/', mcpServers: './.mcp.json' })
+    validateManifest({ name: 'jfrog', version: '0.1.0', description: 'd', skills: './skills/', mcpServers: './mcp.json' })
       .some((e) => e.includes('mcpServers'))
   );
+});
+
+test('validateMcp accepts direct and wrapped server maps, flags servers without url/command', () => {
+  assert.deepEqual(validateMcp({ jfrog: { url: 'https://x/mcp' } }), []);
+  assert.deepEqual(validateMcp({ mcp_servers: { jfrog: { url: 'https://x/mcp' } } }), []);
+  assert.deepEqual(validateMcp({ local: { command: 'node', args: ['s.js'] } }), []);
+  assert.ok(validateMcp({}).some((e) => e.includes('no MCP servers')));
+  assert.ok(validateMcp({ jfrog: {} }).some((e) => e.includes('url') && e.includes('command')));
 });
 
 test('validateMarketplace requires a local source with a ./ path', () => {

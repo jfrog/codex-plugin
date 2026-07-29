@@ -1,9 +1,9 @@
 {
   "name": "codex-plugin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
-  "description": "JFrog skills plugin for OpenAI Codex (Phase 1: skills only).",
+  "description": "JFrog skills and MCP server plugin for OpenAI Codex.",
   "license": "Apache-2.0",
   "scripts": {
     "sync-skills": "node scripts/sync-skills.mjs",
