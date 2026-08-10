@@ -1,11 +1,21 @@
 {
   "name": "jfrog",
-  "version": "0.1.1",
-  "description": "JFrog skills and the JFrog MCP server for Codex — interact with the JFrog Platform.",
-  "author": { "name": "JFrog", "email": "michaelto@jfrog.com" },
+  "version": "0.1.2",
+  "description": "JFrog skills and the JFrog MCP server for Codex \u2014 interact with the JFrog Platform.",
+  "author": {
+    "name": "JFrog",
+    "email": "michaelto@jfrog.com"
+  },
   "license": "Apache-2.0",
   "repository": "https://github.com/jfrog/codex-plugin",
-  "keywords": ["jfrog", "artifactory", "codex", "plugin", "skills", "mcp"],
+  "keywords": [
+    "jfrog",
+    "artifactory",
+    "codex",
+    "plugin",
+    "skills",
+    "mcp"
+  ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
