@@ -12,4 +12,4 @@ Include steps to reproduce, affected versions or commits, and impact if known.
 
 This repository ships an OpenAI Codex plugin (skills and an MCP server manifest).
 
-Do not commit secrets, API keys, or credentials. Skill runtime data under `**/local-cache/` must not be checked into git.
+Do not commit secrets, API keys, or credentials, or any local JFrog runtime data the skills write into a workspace (for example under `.jfrog/`).
