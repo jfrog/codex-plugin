@@ -21,9 +21,9 @@ The JFrog plugin provides the following capabilities, grouped by component:
 Before installing, make sure you have:
 
 - **JFrog host URL and access token** — Your JFrog platform URL and a valid access token.
-- **OpenAI Codex** — Installed, with plugin support (`/plugin` commands available).
+- **OpenAI Codex** — Installed, with plugin support (`codex plugin` CLI commands available).
 - **Node.js** (≥ 18) — with `npx` on your `PATH` (used by the Agent Guard).
-- **Skill runtime requirements** — `jf` CLI, `jq`, and `curl` on `PATH`, plus a configured JFrog instance. Configure the CLI with `jf config add` — see [Authentication](#authentication).
+- **Skill runtime requirements** — `jf` CLI, `jq`, and `curl` on `PATH`, plus a configured JFrog instance. For the minimum versions, see the upstream skills [`Requirements`](https://github.com/jfrog/jfrog-skills/blob/v0.22.0/README.md#requirements). Configure the CLI with `jf config add` — see [Authentication](#authentication).
 - **JFrog AI Catalog** (optional) — If you want to use the Agent Guard feature, your JFrog subscription needs to include the AI Catalog entitlement. Contact your JFrog account team if you're unsure whether it's enabled.
 - **JFrog CLI ≥ 2.105.0** (optional) — If you want the Agent Guard to auto-resolve the credentials/server ID from the JFrog CLI configuration.
 - **JFrog project** (optional) — If you want to use the Agent Guard feature.
@@ -34,17 +34,14 @@ Before installing, make sure you have:
 
 ### Install the Codex plugin
 
-```
-/plugin marketplace add jfrog/codex-plugin
-/plugin install jfrog@codex-plugin
-```
-
-The equivalent from a shell (outside the Codex TUI) is:
+Add the JFrog marketplace and install the plugin with the Codex CLI:
 
 ```bash
 codex plugin marketplace add jfrog/codex-plugin
 codex plugin add jfrog@codex-plugin
 ```
+
+Browse installed plugins in the Codex TUI with `/plugins`.
 
 ### Local development
 
@@ -88,7 +85,8 @@ installing, do two things:
 2. **Log in (OAuth).** Run `codex mcp login jfrog` and finish the browser
    sign-in.
 
-Restart Codex; `/mcp` now lists `jfrog` with its tools.
+Restart Codex; the `jfrog` MCP server and its tools are now available (verify with
+`codex mcp list`).
 
 ---
 
@@ -162,9 +160,11 @@ To pull a newer upstream release into this repo:
 3. Bump `version` in both [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json)
    and [`package.json`](package.json) (they must match — CI enforces this) so the
    published plugin reflects the new skills bundle.
-4. Commit the pin bump, the regenerated `skills/` tree, and the version bump
-   together, and open a PR whose merge commit subject carries a `[patch]` /
-   `[minor]` / `[major]` marker (see [Releasing](#releasing)).
+4. Update the pinned-version link in the [Prerequisites](#prerequisites) section so the
+   skill runtime requirements point at the new tag.
+5. Commit the pin bump, the regenerated `skills/` tree, the version bump, and the
+   README link bump together, and open a PR whose merge commit subject carries a
+   `[patch]` / `[minor]` / `[major]` marker (see [Releasing](#releasing)).
 
 See [`VENDOR.md`](VENDOR.md) for the full picture.
 
