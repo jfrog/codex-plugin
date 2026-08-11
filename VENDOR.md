@@ -7,7 +7,10 @@ The skill packages under `skills/` are vendored from **[jfrog/jfrog-skills](http
 | **Repository** | https://github.com/jfrog/jfrog-skills |
 | **Pinned release** | see `pin` in [`scripts/sync-skills-vendor.json`](scripts/sync-skills-vendor.json) |
 
-Included directories: `jfrog/`, `jfrog-ai-catalog-skills/`, `jfrog-package-safety-and-download/` (as of the pinned release).
+Included skill directories (as of the pinned release): `jfrog/`,
+`jfrog-package-safety-and-download/`, `jfrog-setup-package-managers/`,
+`jfrog-ai-catalog-skills/`, `jfrog-mcp-management/` (JFrog Agent Guard MCP
+management, including the Codex harness), and `jfrog-reference-architecture/`.
 
 ## Refreshing
 
