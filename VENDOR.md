@@ -7,7 +7,10 @@ The skill packages under `skills/` are vendored from **[jfrog/jfrog-skills](http
 | **Repository** | https://github.com/jfrog/jfrog-skills |
 | **Pinned release** | see `pin` in [`scripts/sync-skills-vendor.json`](scripts/sync-skills-vendor.json) |
 
-Included directories: `jfrog/`, `jfrog-ai-catalog-skills/`, `jfrog-package-safety-and-download/` (as of the pinned release).
+Included skill directories (as of the pinned release): `jfrog/`,
+`jfrog-package-safety-and-download/`, `jfrog-setup-package-managers/`,
+`jfrog-ai-catalog-skills/`, `jfrog-mcp-management/` (JFrog Agent Guard MCP
+management, including the Codex harness), and `jfrog-reference-architecture/`.
 
 ## Refreshing
 
@@ -15,7 +18,9 @@ When the upstream repo publishes a new release, refresh the vendored tree via a 
 
 1. Bumps `pin` in [`scripts/sync-skills-vendor.json`](scripts/sync-skills-vendor.json) to the new tag.
 2. Re-syncs and commits the refreshed `skills/` tree.
-3. Bumps `version` in [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json) so the published plugin version reflects the new skills bundle.
+3. Bumps `version` in **both** [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json) and [`package.json`](package.json) — they must match (CI enforces this) — so the published plugin version reflects the new skills bundle.
+
+Merging the PR does not publish on its own: the merge commit **subject** must carry a `[patch]` / `[minor]` / `[major]` marker, which [`.github/workflows/release.yml`](.github/workflows/release.yml) enforces as the release gate. See the README's [Releasing](README.md#releasing) and [Updating the vendored skills](README.md#updating-the-vendored-skills) sections for the full workflow.
 
 To regenerate the tree locally before opening the PR:
 

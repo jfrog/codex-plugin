@@ -1,0 +1,15 @@
+# Security
+
+## Reporting a vulnerability
+
+Please report security issues responsibly so we can address them before public disclosure.
+
+- **Email:** [security@jfrog.com](mailto:security@jfrog.com) or follow the process described on [JFrog's security page](https://jfrog.com/trust/report-vulnerability/).
+
+Include steps to reproduce, affected versions or commits, and impact if known.
+
+## Scope
+
+This repository ships an OpenAI Codex plugin (skills and an MCP server manifest).
+
+Do not commit secrets, API keys, or credentials, or any local JFrog runtime data the skills write into a workspace (for example under `.jfrog/`).
