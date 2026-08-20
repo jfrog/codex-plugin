@@ -163,8 +163,7 @@ To pull a newer upstream release into this repo:
 4. Update the pinned-version link in the [Prerequisites](#prerequisites) section so the
    skill runtime requirements point at the new tag.
 5. Commit the pin bump, the regenerated `skills/` tree, the version bump, and the
-   README link bump together, and open a PR whose merge commit subject carries a
-   `[patch]` / `[minor]` / `[major]` marker (see [Releasing](#releasing)).
+   README link bump together, and open a PR (see [Releasing](#releasing)).
 
 See [`VENDOR.md`](VENDOR.md) for the full picture.
 
@@ -173,12 +172,10 @@ See [`VENDOR.md`](VENDOR.md) for the full picture.
 ## Releasing
 
 Releases are cut automatically by [`.github/workflows/release.yml`](.github/workflows/release.yml)
-when a commit lands on `main` whose **subject line** contains a
-`[major]` / `[minor]` / `[patch]` marker. The workflow reads the version from
-`.codex-plugin/plugin.json` (cross-checked against `package.json`), refuses to
-re-release an existing tag, and publishes a GitHub Release `v<version>` with a
-zipped artifact. A version is released only when both a manifest bump **and** a
-marker commit reach `main`.
+when a commit lands on `main` with a version in `.codex-plugin/plugin.json` that is newer than
+the latest release tag (cross-checked against `package.json`). The workflow publishes a GitHub
+Release `v<version>` with a zipped artifact. A version is released only when a manifest bump
+reaches `main`.
 
 ---
 

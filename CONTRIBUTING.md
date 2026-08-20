@@ -52,13 +52,13 @@ This downloads the pinned upstream tarball and replaces the contents of `skills/
 To cut a release:
 
 1. In your PR, bump `version` in **both** [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json) and [`package.json`](package.json) to the same, not-yet-released value. `plugin.json` is canonical; `package.json` carries its own copy, and the two are cross-checked.
-2. Merge to `main` with `[major]`, `[minor]`, or `[patch]` in the commit **subject** — the first line. A marker elsewhere in the body is ignored on purpose.
+2. Merge to `main`. Every push to `main` compares the manifest version against the latest release tag: if the version is newer, a release proceeds; if it matches the latest tag, the workflow fails with a clear "already released" error; if it is older, it fails with a revert warning.
 
-The marker only decides *whether* to release; the version comes from the manifests either way, so the bump is reviewed in the PR that makes it. Merging a marker without bumping the manifests fails the release rather than re-tagging a shipped version.
+The bump is reviewed in the PR that makes it. Merging without bumping the manifests fails the release rather than silently skipping or re-tagging a shipped version.
 
-[`.github/workflows/release.yml`](.github/workflows/release.yml) reads the version from `.codex-plugin/plugin.json` (cross-checked against `package.json`), refuses to continue if that version is already tagged, re-runs the same validation as the PR workflow, packages the tracked files at `HEAD` (minus `.github/`) into `release.zip`, and creates the `vX.Y.Z` tag as part of publishing the GitHub Release.
+[`.github/workflows/release.yml`](.github/workflows/release.yml) reads the version from `.codex-plugin/plugin.json` (cross-checked against `package.json`), re-runs the same validation as the PR workflow, packages the tracked files at `HEAD` (minus `.github/`) into `release.zip`, and creates the `vX.Y.Z` tag as part of publishing the GitHub Release.
 
-A PR without a marker (docs, chores, or fixes that don't ship a new plugin version) merges normally and cuts no release.
+A PR that does not bump the version (docs, chores, or fixes that don't ship a new plugin version) will fail the release workflow on merge — bump the version only when you intend to cut a release.
 
 ## Reporting Issues
 

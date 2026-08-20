@@ -20,7 +20,7 @@ When the upstream repo publishes a new release, refresh the vendored tree via a 
 2. Re-syncs and commits the refreshed `skills/` tree.
 3. Bumps `version` in **both** [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json) and [`package.json`](package.json) — they must match (CI enforces this) — so the published plugin version reflects the new skills bundle.
 
-Merging the PR does not publish on its own: the merge commit **subject** must carry a `[patch]` / `[minor]` / `[major]` marker, which [`.github/workflows/release.yml`](.github/workflows/release.yml) enforces as the release gate. See the README's [Releasing](README.md#releasing) and [Updating the vendored skills](README.md#updating-the-vendored-skills) sections for the full workflow.
+Merging the PR does not publish on its own: the version in [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json) must be bumped to a value newer than the latest release tag, which [`.github/workflows/release.yml`](.github/workflows/release.yml) enforces on every push to `main`. See the README's [Releasing](README.md#releasing) and [Updating the vendored skills](README.md#updating-the-vendored-skills) sections for the full workflow.
 
 To regenerate the tree locally before opening the PR:
 
