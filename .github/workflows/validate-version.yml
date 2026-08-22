@@ -5,8 +5,11 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs:
-  validate:
+  validate-version:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5

@@ -174,8 +174,9 @@ See [`VENDOR.md`](VENDOR.md) for the full picture.
 Releases are cut automatically by [`.github/workflows/release.yml`](.github/workflows/release.yml)
 when a commit lands on `main` with a version in `.codex-plugin/plugin.json` that is newer than
 the latest release tag (cross-checked against `package.json`). The workflow publishes a GitHub
-Release `v<version>` with a zipped artifact. A version is released only when a manifest bump
-reaches `main`.
+Release `v<version>` with a zipped artifact. Every merge to `main` must bump both manifests —
+a commit that lands without a bump fails the workflow instead of releasing. See
+[CONTRIBUTING.md](CONTRIBUTING.md#releasing) for the full flow.
 
 ---
 

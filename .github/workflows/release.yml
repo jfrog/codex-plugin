@@ -1,6 +1,7 @@
 # Copyright (c) JFrog Ltd. 2026
 #
 # Cuts a GitHub Release when the version file on main is newer than the latest tag.
+# Full flow and rationale: CONTRIBUTING.md#releasing
 name: Release
 
 on:
@@ -18,36 +19,38 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      # Full history, so the tag check below can see existing tags.
+      # fetch-depth: 0 here, plus `git fetch --tags` in the gate below, so the gate sees every
+      # release tag — including one created by a prior run that was still queued behind this one.
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       # plugin.json is canonical; package.json carries its own copy, so the two are
-      # cross-checked here as well as by the PR version-consistency check.
+      # cross-checked here as well as by the validate-version PR workflow.
       - name: Read version from the plugin manifest
         id: version
         run: |
           set -euo pipefail
           VERSION=$(jq -er '.version' .codex-plugin/plugin.json)
-          if ! printf '%s' "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-            echo "::error::plugin.json version '$VERSION' is not X.Y.Z — refusing to release"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::.codex-plugin/plugin.json version '$VERSION' is not X.Y.Z — refusing to release"
             exit 1
           fi
           PK_VERSION=$(jq -er '.version' package.json)
           if [ "$VERSION" != "$PK_VERSION" ]; then
-            echo "::error::plugin.json is $VERSION but package.json is $PK_VERSION — sync them before releasing"
+            echo "::error::.codex-plugin/plugin.json is $VERSION but package.json is $PK_VERSION — sync them before releasing"
             exit 1
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Compare version against latest release tag
         id: release_gate
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
           set -euo pipefail
-          VERSION="${{ steps.version.outputs.version }}"
           git fetch --tags origin
-          LATEST=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' | sort -V | tail -1)
+          LATEST=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
           if [ -z "$LATEST" ]; then
             echo "should_release=true" >> "$GITHUB_OUTPUT"
             echo "No prior release tag — v${VERSION} will be the first release"
@@ -61,38 +64,44 @@ jobs:
           TAG_FOR_VERSION="v${VERSION}"
           LOWEST=$(printf '%s\n%s\n' "$TAG_FOR_VERSION" "$LATEST" | sort -V | head -1)
           if [ "$LOWEST" = "$TAG_FOR_VERSION" ]; then
-            echo "::error::plugin.json version ${VERSION} is older than the latest release ${LATEST} — check for an accidental revert"
+            echo "::error::.codex-plugin/plugin.json version ${VERSION} is older than the latest release ${LATEST} — check for an accidental revert"
             exit 1
           fi
           echo "should_release=true" >> "$GITHUB_OUTPUT"
           echo "Version ${VERSION} is newer than ${LATEST} — proceeding with release"
 
       - uses: actions/setup-node@v5
-        if: steps.release_gate.outputs.should_release == 'true'
         with:
           node-version: "20"
 
-      # pr.yml only runs on pull requests, so nothing checks the merge commit itself.
-      # Re-running validation here is what gates the release on it.
+      # pr.yml runs on this same push, but as an independent workflow that can't gate this one.
+      # Re-running its checks here is what actually gates the release on them.
       - name: Validate before release
-        if: steps.release_gate.outputs.should_release == 'true'
         run: |
           node --test scripts/validate.test.mjs
           node scripts/validate.mjs
 
       # Tracked files at HEAD only, so nothing left on the runner can end up in the zip.
       - name: Package release artifact
-        if: steps.release_gate.outputs.should_release == 'true'
         run: git archive --format=zip --output=release.zip HEAD -- ':(exclude).github'
 
       # --target creates the tag as part of the release, so a failure can't leave an orphan tag.
       - name: Create GitHub Release
-        if: steps.release_gate.outputs.should_release == 'true'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
         run: |
-          gh release create "v${{ steps.version.outputs.version }}" \
+          gh release create "v${VERSION}" \
             release.zip \
             --target "$GITHUB_SHA" \
-            --title "Release v${{ steps.version.outputs.version }}" \
+            --title "Release v${VERSION}" \
             --generate-notes
+
+      # Only when the gate passed: a gate failure means the version was already released, and that
+      # release belongs to an earlier run — deleting it here would destroy a shipped release.
+      - name: Roll back a partially published release
+        if: failure() && steps.release_gate.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: gh release delete "v${VERSION}" --yes --cleanup-tag || true
