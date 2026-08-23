@@ -50,9 +50,8 @@ jobs:
         run: |
           set -euo pipefail
           git fetch --tags origin
-          LATEST=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -1)
+          LATEST=$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' | { grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' || true; } | sort -V | tail -1)
           if [ -z "$LATEST" ]; then
-            echo "should_release=true" >> "$GITHUB_OUTPUT"
             echo "No prior release tag — v${VERSION} will be the first release"
             exit 0
           fi
@@ -67,7 +66,6 @@ jobs:
             echo "::error::.codex-plugin/plugin.json version ${VERSION} is older than the latest release ${LATEST} — check for an accidental revert"
             exit 1
           fi
-          echo "should_release=true" >> "$GITHUB_OUTPUT"
           echo "Version ${VERSION} is newer than ${LATEST} — proceeding with release"
 
       - uses: actions/setup-node@v5
@@ -75,11 +73,14 @@ jobs:
           node-version: "20"
 
       # pr.yml runs on this same push, but as an independent workflow that can't gate this one.
-      # Re-running its checks here is what actually gates the release on them.
+      # Re-running its checks here (unit tests, manifest validate, vendor-sync drift) is what
+      # actually gates the release on them.
       - name: Validate before release
         run: |
           node --test scripts/validate.test.mjs
           node scripts/validate.mjs
+          node scripts/sync-skills.mjs
+          git diff --exit-code -- skills/
 
       # Tracked files at HEAD only, so nothing left on the runner can end up in the zip.
       - name: Package release artifact
