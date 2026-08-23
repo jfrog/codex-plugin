@@ -1,26 +1,32 @@
 {
   "name": "jfrog",
-  "version": "0.1.2",
-  "description": "JFrog skills and the JFrog MCP server for Codex \u2014 interact with the JFrog Platform.",
+  "version": "0.1.3",
+  "description": "The official JFrog agent plugin: skills, MCP server, Agent Guard, and Agent Package Resolution that connect the JFrog Platform to Codex. Centrally deployed via Artifactory with enterprise-grade security, governance, and local audit logging.",
   "author": {
-    "name": "JFrog",
-    "email": "michaelto@jfrog.com"
+    "name": "JFrog"
   },
   "license": "Apache-2.0",
   "repository": "https://github.com/jfrog/codex-plugin",
   "keywords": [
     "jfrog",
     "artifactory",
+    "xray",
+    "security",
+    "mcp",
+    "agent-guard",
+    "ai-catalog",
+    "supply-chain",
+    "devops",
+    "artifacts",
     "codex",
     "plugin",
-    "skills",
-    "mcp"
+    "skills"
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "JFrog",
-    "shortDescription": "JFrog Platform skills for Codex",
+    "shortDescription": "JFrog Platform access, agent governance, and package curation for Codex",
     "category": "DevOps"
   }
 }
