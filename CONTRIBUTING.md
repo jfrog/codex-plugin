@@ -13,8 +13,9 @@ All contributors must sign the [JFrog CLA](https://jfrog.com/cla/) before contri
 3. **Validate** locally:
 
 ```bash
-npm test         # unit tests for the manifest/skill validator
-npm run validate # lint the plugin manifests + skill frontmatter
+npm test                              # unit tests for the manifest/skill validator
+npm run validate                      # lint the plugin manifests + skill frontmatter
+node scripts/validate-install-docs.mjs # check install/verify docs stay aligned
 ```
 
 1. **Test** by loading your clone as the plugin. The repo root is the marketplace root (`.agents/plugins/marketplace.json` registers the `jfrog` plugin):
@@ -41,7 +42,8 @@ This downloads the pinned upstream tarball and replaces the contents of `skills/
 
 ## Pre-release checklist
 
-- [ ] `npm test` and `npm run validate` pass.
+- [ ] `npm test`, `npm run validate`, and `node scripts/validate-install-docs.mjs` pass.
+- [ ] Install and recovery docs stay aligned: [`README.md`](README.md), [`docs/install-jfrog-plugin-for-codex.md`](docs/install-jfrog-plugin-for-codex.md), and the [shared guide](https://github.com/jfrog/claude-plugin/blob/main/docs/shared-install-and-verify.md) agree on initialization, env vars, restart, verification, and recovery.
 - [ ] `version` bumped and **identical** in both [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json) and [`package.json`](package.json) (CI enforces the match).
 - [ ] No secrets, credentials, or API keys committed.
 - [ ] If the skill tree changed: `pin` in [`scripts/sync-skills-vendor.json`](scripts/sync-skills-vendor.json) matches the upstream tag the new tree was generated from, and the README Prerequisites link points at that tag.

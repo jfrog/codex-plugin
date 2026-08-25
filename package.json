@@ -8,6 +8,6 @@
   "scripts": {
     "sync-skills": "node scripts/sync-skills.mjs",
     "validate": "node scripts/validate.mjs",
-    "test": "node --test scripts/validate.test.mjs"
+    "test": "node --test scripts/validate.test.mjs scripts/validate-install-docs.test.mjs"
   }
 }

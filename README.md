@@ -3,6 +3,10 @@
 JFrog plugin for [OpenAI Codex](https://developers.openai.com/codex/): artifact
 management, security scanning, supply-chain best practices, and Agent Guard.
 
+> **Install flow:** Follow the [shared install, verify, and recovery guide](https://github.com/jfrog/claude-plugin/blob/main/docs/shared-install-and-verify.md) for the cross-harness rules on initialization, environment variables, restart, verification, and recovery. This README documents **Codex-only** differences.
+>
+> **Web doc source:** [`docs/install-jfrog-plugin-for-codex.md`](docs/install-jfrog-plugin-for-codex.md) is the source for the published Codex install page.
+
 ## Features
 
 The JFrog plugin provides the following capabilities, grouped by component:
@@ -87,6 +91,23 @@ installing, do two things:
 
 Restart Codex; the `jfrog` MCP server and its tools are now available (verify with
 `codex mcp list`).
+
+---
+
+## Verify
+
+Verification is a required install step, not a troubleshooting fallback. After
+restarting Codex, confirm all four:
+
+1. `codex plugin list` — `jfrog@codex-plugin` is installed and enabled.
+2. `/plugins` in the Codex TUI — the JFrog plugin lists its skills (`jfrog` and others).
+3. `codex mcp list` — `jfrog` is connected (after `codex mcp login jfrog`).
+4. `jf rt ping` — succeeds against your configured JFrog server.
+
+If any check fails, see the recovery playbook in the
+[shared guide](https://github.com/jfrog/claude-plugin/blob/main/docs/shared-install-and-verify.md#recovery-playbook).
+Setting MCP environment variables by hand does not repair a failed
+initialization — re-run initialization instead.
 
 ---
 
