@@ -3,9 +3,7 @@
 JFrog plugin for [OpenAI Codex](https://developers.openai.com/codex/): artifact
 management, security scanning, supply-chain best practices, and Agent Guard.
 
-> **Install flow:** Follow the [shared install, verify, and recovery guide](https://github.com/jfrog/claude-plugin/blob/main/docs/shared-install-and-verify.md) for the cross-harness rules on initialization, environment variables, restart, verification, and recovery. This README documents **Codex-only** differences.
->
-> **Web doc source:** [`docs/install-jfrog-plugin-for-codex.md`](docs/install-jfrog-plugin-for-codex.md) is the source for the published Codex install page.
+> **Install, verify, and recovery:** [`docs/install-jfrog-plugin-for-codex.md`](docs/install-jfrog-plugin-for-codex.md) is the source for the published Codex install page.
 
 ## Features
 
@@ -104,10 +102,19 @@ restarting Codex, confirm all four:
 3. `codex mcp list` — `jfrog` is connected (after `codex mcp login jfrog`).
 4. `jf rt ping` — succeeds against your configured JFrog server.
 
-If any check fails, see the recovery playbook in the
-[shared guide](https://github.com/jfrog/claude-plugin/blob/main/docs/shared-install-and-verify.md#recovery-playbook).
-Setting MCP environment variables by hand does not repair a failed
-initialization — re-run initialization instead.
+If any check fails, see [Recovery](#recovery). Setting MCP environment variables
+by hand does not repair a failed initialization — re-run `jfrog-init` instead.
+
+---
+
+## Recovery
+
+| Symptom | Do this | Do **not** do this |
+| --- | --- | --- |
+| MCP missing after install | Run `jfrog-init`, edit the plugin `.mcp.json` host if needed, run `codex mcp login jfrog`, **restart Codex**, then `codex mcp list`. | Assume exporting `JFROG_URL` or `JFROG_PLATFORM_URL` will register MCP. Codex reads the host from `.mcp.json`. |
+| `jfrog-init` stopped at CLI/auth | Follow the skill prompt (`jf config add`, web login, or token path), then **re-run `jfrog-init`**. | Skip init and only export env vars. |
+| Placeholder still in `.mcp.json` | Set the host in `<install-path>/.mcp.json`, run `codex mcp login jfrog`, restart Codex. | Reinstall the plugin when only the host placeholder is wrong. |
+| Plugin not listed | Re-run `codex plugin add jfrog@codex-plugin` from a regular terminal, then restart Codex. | Run install commands from inside the Codex TUI. |
 
 ---
 

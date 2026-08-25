@@ -10,29 +10,29 @@ function writeReadme(root, body) {
   writeFileSync(join(root, 'README.md'), body);
 }
 
-test('validateInstallDocs passes when README links shared guide and has Verify section', () => {
-  const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
-  writeReadme(
-    root,
-    '# Codex\n\n[shared flow](shared-install-and-verify.md)\n\n## Verify\n\n1. list plugins\n'
-  );
+function withWebDoc(root, name = 'install-jfrog-plugin-for-codex.md') {
   mkdirSync(join(root, 'docs'), { recursive: true });
-  writeFileSync(join(root, 'docs', 'install-jfrog-plugin-for-codex.md'), '# web doc');
+  writeFileSync(join(root, 'docs', name), '# web doc\n');
+}
+
+test('validateInstallDocs passes when README has Verify and no other-plugin links', () => {
+  const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
+  writeReadme(root, '# Codex\n\n## Verify\n\n1. list plugins\n');
+  withWebDoc(root);
   assert.deepEqual(validateInstallDocs({ repoRoot: root, harness: 'codex' }), []);
 });
 
-test('validateInstallDocs flags missing shared guide link', () => {
+test('validateInstallDocs flags missing Verify section', () => {
   const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
-  writeReadme(root, '# Codex\n\n## Verify\n\n1. ok\n');
-  mkdirSync(join(root, 'docs'), { recursive: true });
-  writeFileSync(join(root, 'docs', 'install-jfrog-plugin-for-codex.md'), '# web doc');
+  writeReadme(root, '# Codex\n\nInstall the plugin.\n');
+  withWebDoc(root);
   const errors = validateInstallDocs({ repoRoot: root, harness: 'codex' });
-  assert.ok(errors.some((e) => e.includes('shared-install-and-verify')));
+  assert.ok(errors.some((e) => e.includes('## Verify')));
 });
 
 test('validateInstallDocs requires codex web doc source file', () => {
   const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
-  writeReadme(root, '# Codex\n\nshared-install-and-verify\n\n## Verify\n');
+  writeReadme(root, '# Codex\n\n## Verify\n');
   const errors = validateInstallDocs({ repoRoot: root, harness: 'codex' });
   assert.ok(errors.some((e) => e.includes('install-jfrog-plugin-for-codex.md')));
 });
@@ -41,10 +41,20 @@ test('validateInstallDocs rejects contradictory failed-init env-var recovery cla
   const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
   writeReadme(
     root,
-    '# x\nshared-install-and-verify\n## Verify\nSetting environment variables after a failed init may repair MCP registration.'
+    '# x\n## Verify\nSetting environment variables after a failed init may repair MCP registration.'
   );
-  mkdirSync(join(root, 'docs'), { recursive: true });
-  writeFileSync(join(root, 'docs', 'install-jfrog-plugin-for-codex.md'), '# web doc');
+  withWebDoc(root);
   const errors = validateInstallDocs({ repoRoot: root, harness: 'codex' });
   assert.ok(errors.some((e) => e.includes('env vars repair failed init')));
+});
+
+test('validateInstallDocs rejects links to other plugin GitHub repos', () => {
+  const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
+  writeReadme(
+    root,
+    '# Codex\n## Verify\nSee https://github.com/jfrog/claude-plugin/blob/main/docs/install-and-verify.md\n'
+  );
+  withWebDoc(root);
+  const errors = validateInstallDocs({ repoRoot: root, harness: 'codex' });
+  assert.ok(errors.some((e) => e.includes('claude-plugin')));
 });
