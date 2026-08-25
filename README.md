@@ -23,7 +23,7 @@ Before installing, make sure you have:
 - **JFrog host URL and access token** — Your JFrog platform URL and a valid access token.
 - **OpenAI Codex** — Installed, with plugin support (`codex plugin` CLI commands available).
 - **Node.js** (≥ 18) — with `npx` on your `PATH` (used by the Agent Guard).
-- **Skill runtime requirements** — `jf` CLI, `jq`, and `curl` on `PATH`, plus a configured JFrog instance. For the minimum versions, see the upstream skills [`Requirements`](https://github.com/jfrog/jfrog-skills/blob/v0.22.0/README.md#requirements). Configure the CLI with `jf config add` — see [Authentication](#authentication).
+- **Skill runtime requirements** — `jf` CLI, `jq`, and `curl` on `PATH`, plus a configured JFrog instance. For the minimum versions, see the upstream skills [`Requirements`](https://github.com/jfrog/jfrog-skills/blob/main/README.md#requirements). Configure the CLI with `jf config add` — see [Authentication](#authentication).
 - **JFrog AI Catalog** (optional) — If you want to use the Agent Guard feature, your JFrog subscription needs to include the AI Catalog entitlement. Contact your JFrog account team if you're unsure whether it's enabled.
 - **JFrog CLI ≥ 2.105.0** (optional) — If you want the Agent Guard to auto-resolve the credentials/server ID from the JFrog CLI configuration.
 - **JFrog project** (optional) — If you want to use the Agent Guard feature.
@@ -148,7 +148,7 @@ The `skills/` tree is vendored from
 pinned in [`scripts/sync-skills-vendor.json`](scripts/sync-skills-vendor.json).
 To pull a newer upstream release into this repo:
 
-1. Bump `pin` in `scripts/sync-skills-vendor.json` to the new tag (e.g. `v0.23.0`).
+1. Bump `pin` in `scripts/sync-skills-vendor.json` to the new upstream tag.
 2. Re-sync and commit the refreshed tree:
 
    ```bash
@@ -160,10 +160,7 @@ To pull a newer upstream release into this repo:
 3. Bump `version` in both [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json)
    and [`package.json`](package.json) (they must match — CI enforces this) so the
    published plugin reflects the new skills bundle.
-4. Update the pinned-version link in the [Prerequisites](#prerequisites) section so the
-   skill runtime requirements point at the new tag.
-5. Commit the pin bump, the regenerated `skills/` tree, the version bump, and the
-   README link bump together, and open a PR whose merge commit subject carries a
+4. Commit the pin bump, the regenerated `skills/` tree, and the version bump together, and open a PR whose merge commit subject carries a
    `[patch]` / `[minor]` / `[major]` marker (see [Releasing](#releasing)).
 
 See [`VENDOR.md`](VENDOR.md) for the full picture.
