@@ -111,7 +111,7 @@ by hand does not repair a failed initialization — re-run `jfrog-init` instead.
 
 | Symptom | Do this | Do **not** do this |
 | --- | --- | --- |
-| MCP missing after install | Run `jfrog-init`, edit the plugin `.mcp.json` host if needed, run `codex mcp login jfrog`, **restart Codex**, then `codex mcp list`. | Assume exporting `JFROG_URL` or `JFROG_PLATFORM_URL` will register MCP. Codex reads the host from `.mcp.json`. |
+| MCP missing after install | Run `jfrog-init`, edit the plugin `.mcp.json` host if needed, run `codex mcp login jfrog`, **restart Codex**, then `codex mcp list`. | Assume exporting `JFROG_PLATFORM_URL` will register MCP. Codex reads the host from `.mcp.json`. |
 | `jfrog-init` stopped at CLI/auth | Follow the skill prompt (`jf config add`, web login, or token path), then **re-run `jfrog-init`**. | Skip init and only export env vars. |
 | Placeholder still in `.mcp.json` | Set the host in `<install-path>/.mcp.json`, run `codex mcp login jfrog`, restart Codex. | Reinstall the plugin when only the host placeholder is wrong. |
 | Plugin not listed | Re-run `codex plugin add jfrog@codex-plugin` from a regular terminal, then restart Codex. | Run install commands from inside the Codex TUI. |

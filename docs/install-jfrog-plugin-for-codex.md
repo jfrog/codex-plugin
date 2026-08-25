@@ -54,8 +54,8 @@ The plugin is served from the public GitHub repo as a **Git marketplace** (`jfro
 4. **Restart Codex again** after initialization or MCP edits.
 
 The bundled MCP host is set by editing the plugin's `.mcp.json`, not by exporting a
-shell variable. Setting `JFROG_URL` or `JFROG_PLATFORM_URL` in the environment does
-not substitute that placeholder, and does not repair a failed `jfrog-init`.
+shell variable. Setting `JFROG_PLATFORM_URL` in the environment does not substitute
+that placeholder, and does not repair a failed `jfrog-init`.
 
 ## Verify (required)
 
@@ -75,7 +75,7 @@ Do not skip verification — treat this as part of installation.
 
 | Symptom | Do this | Do **not** do this |
 | --- | --- | --- |
-| MCP missing after install | Run `jfrog-init`, edit `<install-path>/.mcp.json` if the host is still a placeholder, run `codex mcp login jfrog`, **restart Codex**, then `codex mcp list`. | Assume exporting `JFROG_URL` will register MCP. |
+| MCP missing after install | Run `jfrog-init`, edit `<install-path>/.mcp.json` if the host is still a placeholder, run `codex mcp login jfrog`, **restart Codex**, then `codex mcp list`. | Assume exporting `JFROG_PLATFORM_URL` will register MCP. |
 | `jfrog-init` stopped at CLI/auth | Follow the skill prompt (`jf config add`, web login, or token path), then **re-run `jfrog-init`**. | Skip init and only export env vars. |
 | Placeholder still in `.mcp.json` | Replace `<JFROG_PLATFORM_URL>` with your host, run `codex mcp login jfrog`, restart. | Reinstall the plugin when only the host placeholder is wrong. |
 | Plugin not listed | Re-run `codex plugin add jfrog@codex-plugin` from a regular terminal, then restart Codex. | Run install commands from inside the Codex TUI. |

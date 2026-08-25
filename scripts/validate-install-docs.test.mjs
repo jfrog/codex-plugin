@@ -48,6 +48,14 @@ test('validateInstallDocs rejects contradictory failed-init env-var recovery cla
   assert.ok(errors.some((e) => e.includes('env vars repair failed init')));
 });
 
+test('validateInstallDocs rejects the legacy JFROG_URL env var', () => {
+  const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
+  writeReadme(root, '# Codex\n## Verify\nSet `JFROG_URL` to your platform.\n');
+  withWebDoc(root);
+  const errors = validateInstallDocs({ repoRoot: root, harness: 'codex' });
+  assert.ok(errors.some((e) => e.includes('JFROG_URL')));
+});
+
 test('validateInstallDocs rejects links to other plugin GitHub repos', () => {
   const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
   writeReadme(

@@ -28,8 +28,8 @@ const FORBIDDEN_PATTERNS = [
     message: 'must not claim env vars repair failed init',
   },
   {
-    re: /set\s+JFROG_URL.*after.*failed.*init.*fix/i,
-    message: 'must not claim JFROG_URL fixes failed init',
+    re: /JFROG_URL/,
+    message: 'must not document the legacy JFROG_URL env var; use JFROG_PLATFORM_URL',
   },
 ];
 
