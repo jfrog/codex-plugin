@@ -66,3 +66,14 @@ test('validateInstallDocs rejects links to other plugin GitHub repos', () => {
   const errors = validateInstallDocs({ repoRoot: root, harness: 'codex' });
   assert.ok(errors.some((e) => e.includes('claude-plugin')));
 });
+
+test('validateInstallDocs rejects Jira URLs and ticket keys', () => {
+  const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
+  const host = ['jfrog-int', 'atlassian', 'net'].join('.');
+  const key = ['AX', '1780'].join('-');
+  writeReadme(root, `# Codex\n## Verify\nSee [${key}](https://${host}/browse/${key}).\n`);
+  withWebDoc(root);
+  const errors = validateInstallDocs({ repoRoot: root, harness: 'codex' });
+  assert.ok(errors.some((e) => e.includes('atlassian.net')));
+  assert.ok(errors.some((e) => e.includes('Jira ticket keys')));
+});

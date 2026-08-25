@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Copyright (c) JFrog Ltd. 2026
 // Licensed under the Apache License, Version 2.0
-// Validates install/recovery documentation invariants for AX-2162.
+// Validates install/recovery documentation invariants.
 
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -30,6 +30,14 @@ const FORBIDDEN_PATTERNS = [
   {
     re: /JFROG_URL/,
     message: 'must not document the legacy JFROG_URL env var; use JFROG_PLATFORM_URL',
+  },
+  {
+    re: /atlassian\.net/i,
+    message: 'must not reference JFrog Jira (atlassian.net) in repo files',
+  },
+  {
+    re: /\b(?:AX|MLD)-\d+\b/,
+    message: 'must not include Jira ticket keys in repo files',
   },
 ];
 
