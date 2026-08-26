@@ -3,8 +3,6 @@
 JFrog plugin for [OpenAI Codex](https://developers.openai.com/codex/): artifact
 management, security scanning, supply-chain best practices, and Agent Guard.
 
-> **Install, verify, and recovery:** [`docs/install-jfrog-plugin-for-codex.md`](docs/install-jfrog-plugin-for-codex.md) is the source for the published Codex install page.
-
 ## Features
 
 The JFrog plugin provides the following capabilities, grouped by component:

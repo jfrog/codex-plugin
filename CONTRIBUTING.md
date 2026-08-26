@@ -43,7 +43,7 @@ This downloads the pinned upstream tarball and replaces the contents of `skills/
 ## Pre-release checklist
 
 - [ ] `npm test`, `npm run validate`, and `node scripts/validate-install-docs.mjs` pass.
-- [ ] Install and recovery docs stay aligned: [`README.md`](README.md) and [`docs/install-jfrog-plugin-for-codex.md`](docs/install-jfrog-plugin-for-codex.md) agree on initialization, env vars, restart, verification, and recovery. Do not send readers to another plugin repository for those steps.
+- [ ] README includes **Verify** and **Recovery** and does not send readers to another plugin repository for those steps.
 - [ ] `version` bumped and **identical** in both [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json) and [`package.json`](package.json) (CI enforces the match).
 - [ ] No secrets, credentials, or API keys committed.
 - [ ] If the skill tree changed: `pin` in [`scripts/sync-skills-vendor.json`](scripts/sync-skills-vendor.json) matches the upstream tag the new tree was generated from, and the README Prerequisites link points at that tag.

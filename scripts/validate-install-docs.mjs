@@ -49,17 +49,6 @@ export function validateInstallDocs({ repoRoot: root, harness }) {
   }
   const files = [{ label: 'README.md', text: readFileSync(readmePath, 'utf8') }];
 
-  if (harness === 'codex') {
-    const webDoc = join(root, 'docs', 'install-jfrog-plugin-for-codex.md');
-    if (!existsSync(webDoc)) errors.push('codex: missing docs/install-jfrog-plugin-for-codex.md');
-    else files.push({ label: 'docs/install-jfrog-plugin-for-codex.md', text: readFileSync(webDoc, 'utf8') });
-  }
-  if (harness === 'devin') {
-    const webDoc = join(root, 'docs', 'install-jfrog-plugin-for-devin.md');
-    if (!existsSync(webDoc)) errors.push('devin: missing docs/install-jfrog-plugin-for-devin.md');
-    else files.push({ label: 'docs/install-jfrog-plugin-for-devin.md', text: readFileSync(webDoc, 'utf8') });
-  }
-
   const readme = files[0].text;
   for (const marker of REQUIRED_README_MARKERS) {
     if (!readme.includes(marker)) {
