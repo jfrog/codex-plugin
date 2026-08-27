@@ -11,7 +11,7 @@ The JFrog plugin provides the following capabilities, grouped by component:
 | --- | --- | --- |
 | **MCP** | JFrog MCP server | Bundled `jfrog` MCP server ([`.mcp.json`](.mcp.json)) at `https://<JFROG_PLATFORM_URL>/mcp`; this server signs in via OAuth (`codex mcp login jfrog`), so it needs no API key. |
 | **Skill** | JFrog Platform | Interact with Artifactory repositories, builds, permissions, users, access tokens, projects, release bundles, and platform administration via the JFrog CLI and REST/GraphQL APIs. Also covers security audits, CVE lookups, and Advanced Security exposure queries. |
-| **Skill** | Package safety & download | Check whether npm, Maven, PyPI, Go, and other packages are safe, curated, or allowed, then download them through Artifactory remote caches or curation-aware package managers. |
+| **Skill** | Package curation | Check whether npm, Maven, PyPI, Go, and other packages are safe, curated, or allowed, then download them through Artifactory remote caches or curation-aware package managers. |
 | **Skill** | Agent Guard | Codex manages MCPs through the JFrog Agent Guard. Through the Agent Guard you can discover, install, configure, update, and remove MCP servers from the JFrog AI Catalog approved for your project, and authenticate to remote HTTP MCPs via OAuth, API key, or bearer token. |
 
 ---
@@ -23,7 +23,7 @@ Before installing, make sure you have:
 - **JFrog host URL and access token** — Your JFrog platform URL and a valid access token.
 - **OpenAI Codex** — Installed, with plugin support (`codex plugin` CLI commands available).
 - **Node.js** (≥ 18) — with `npx` on your `PATH` (used by the Agent Guard).
-- **Skill runtime requirements** — `jf` CLI, `jq`, and `curl` on `PATH`, plus a configured JFrog instance. For the minimum versions, see the upstream skills [`Requirements`](https://github.com/jfrog/jfrog-skills/blob/v0.22.0/README.md#requirements). Configure the CLI with `jf config add` — see [Authentication](#authentication).
+- **Skill runtime requirements** — `jf` CLI, `jq`, and `curl` on `PATH`, plus a configured JFrog instance. For the minimum versions, see the upstream skills [`Requirements`](https://github.com/jfrog/jfrog-skills/blob/v0.31.1/README.md#requirements). Configure the CLI with `jf config add` — see [Authentication](#authentication).
 - **JFrog AI Catalog** (optional) — If you want to use the Agent Guard feature, your JFrog subscription needs to include the AI Catalog entitlement. Contact your JFrog account team if you're unsure whether it's enabled.
 - **JFrog CLI ≥ 2.105.0** (optional) — If you want the Agent Guard to auto-resolve the credentials/server ID from the JFrog CLI configuration.
 - **JFrog project** (optional) — If you want to use the Agent Guard feature.
@@ -106,7 +106,7 @@ Examples are grouped by capability.
 | "Create a scoped access token for CI." | Creates an access token with the requested scope. |
 | "Promote this release bundle to production." | Uses Lifecycle / Distribution APIs to promote the bundle. |
 
-### Package safety & download skill
+### Package curation skill
 
 | Ask the agent… | What happens |
 | --- | --- |
