@@ -20,7 +20,7 @@ const HARNESS_OWN_REPO = {
 
 const ALL_PLUGIN_REPOS = Object.values(HARNESS_OWN_REPO);
 
-const REQUIRED_README_MARKERS = ['## Verify'];
+const REQUIRED_README_MARKERS = ['## Verify', '## Recovery'];
 
 const FORBIDDEN_PATTERNS = [
   {

@@ -10,9 +10,9 @@ function writeReadme(root, body) {
   writeFileSync(join(root, 'README.md'), body);
 }
 
-test('validateInstallDocs passes when README has Verify and no other-plugin links', () => {
+test('validateInstallDocs passes when README has Verify, Recovery, and no other-plugin links', () => {
   const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
-  writeReadme(root, '# Codex\n\n## Verify\n\n1. list plugins\n');
+  writeReadme(root, '# Codex\n\n## Verify\n\n1. list plugins\n\n## Recovery\n\n');
   assert.deepEqual(validateInstallDocs({ repoRoot: root, harness: 'codex' }), []);
 });
 
@@ -23,11 +23,18 @@ test('validateInstallDocs flags missing Verify section', () => {
   assert.ok(errors.some((e) => e.includes('## Verify')));
 });
 
+test('validateInstallDocs flags missing Recovery section', () => {
+  const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
+  writeReadme(root, '# Codex\n\n## Verify\n\n1. list plugins\n');
+  const errors = validateInstallDocs({ repoRoot: root, harness: 'codex' });
+  assert.ok(errors.some((e) => e.includes('## Recovery')));
+});
+
 test('validateInstallDocs rejects contradictory failed-init env-var recovery claims', () => {
   const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
   writeReadme(
     root,
-    '# x\n## Verify\nSetting environment variables after a failed init may repair MCP registration.'
+    '# x\n## Verify\n## Recovery\nSetting environment variables after a failed init may repair MCP registration.'
   );
   const errors = validateInstallDocs({ repoRoot: root, harness: 'codex' });
   assert.ok(errors.some((e) => e.includes('env vars repair failed init')));
@@ -35,7 +42,7 @@ test('validateInstallDocs rejects contradictory failed-init env-var recovery cla
 
 test('validateInstallDocs rejects the legacy JFROG_URL env var', () => {
   const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
-  writeReadme(root, '# Codex\n## Verify\nSet `JFROG_URL` to your platform.\n');
+  writeReadme(root, '# Codex\n## Verify\n## Recovery\nSet `JFROG_URL` to your platform.\n');
   const errors = validateInstallDocs({ repoRoot: root, harness: 'codex' });
   assert.ok(errors.some((e) => e.includes('JFROG_URL')));
 });
@@ -44,7 +51,7 @@ test('validateInstallDocs rejects links to other plugin GitHub repos', () => {
   const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
   writeReadme(
     root,
-    '# Codex\n## Verify\nSee https://github.com/jfrog/claude-plugin/blob/main/README.md\n'
+    '# Codex\n## Verify\n## Recovery\nSee https://github.com/jfrog/claude-plugin/blob/main/README.md\n'
   );
   const errors = validateInstallDocs({ repoRoot: root, harness: 'codex' });
   assert.ok(errors.some((e) => e.includes('claude-plugin')));
@@ -54,7 +61,7 @@ test('validateInstallDocs rejects Jira URLs and ticket keys', () => {
   const root = mkdtempSync(join(tmpdir(), 'codex-docs-'));
   const host = ['jfrog-int', 'atlassian', 'net'].join('.');
   const key = ['AX', '1780'].join('-');
-  writeReadme(root, `# Codex\n## Verify\nSee [${key}](https://${host}/browse/${key}).\n`);
+  writeReadme(root, `# Codex\n## Verify\n## Recovery\nSee [${key}](https://${host}/browse/${key}).\n`);
   const errors = validateInstallDocs({ repoRoot: root, harness: 'codex' });
   assert.ok(errors.some((e) => e.includes('atlassian.net')));
   assert.ok(errors.some((e) => e.includes('Jira ticket keys')));
