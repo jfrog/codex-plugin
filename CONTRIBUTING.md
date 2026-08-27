@@ -15,7 +15,6 @@ All contributors must sign the [JFrog CLA](https://jfrog.com/cla/) before contri
 ```bash
 npm test                              # unit tests for the manifest/skill validator
 npm run validate                      # lint the plugin manifests + skill frontmatter
-node scripts/validate-install-docs.mjs # check install/verify docs stay aligned
 ```
 
 1. **Test** by loading your clone as the plugin. The repo root is the marketplace root (`.agents/plugins/marketplace.json` registers the `jfrog` plugin):
@@ -42,7 +41,7 @@ This downloads the pinned upstream tarball and replaces the contents of `skills/
 
 ## Pre-release checklist
 
-- [ ] `npm test`, `npm run validate`, and `node scripts/validate-install-docs.mjs` pass.
+- [ ] `npm test` and `npm run validate` pass.
 - [ ] README includes **Verify** and **Recovery** and does not send readers to another plugin repository for those steps.
 - [ ] `version` bumped and **identical** in both [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json) and [`package.json`](package.json) (CI enforces the match).
 - [ ] No secrets, credentials, or API keys committed.
