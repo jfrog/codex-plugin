@@ -90,6 +90,32 @@ Restart Codex; the `jfrog` MCP server and its tools are now available (verify wi
 
 ---
 
+## Verify
+
+Verification is a required install step, not a troubleshooting fallback. After
+restarting Codex, confirm all four:
+
+1. `codex plugin list` — `jfrog@codex-plugin` is installed and enabled.
+2. `/plugins` in the Codex TUI — the JFrog plugin lists its skills (`jfrog` and others).
+3. `codex mcp list` — `jfrog` is connected (after `codex mcp login jfrog`).
+4. `jf rt ping` — succeeds against your configured JFrog server.
+
+If any check fails, see [Recovery](#recovery). Setting MCP environment variables
+by hand does not repair a failed initialization — re-run `jfrog-init` instead.
+
+---
+
+## Recovery
+
+| Symptom | Do this | Do **not** do this |
+| --- | --- | --- |
+| MCP missing after install | Run `jfrog-init`, edit the plugin `.mcp.json` host if needed, run `codex mcp login jfrog`, **restart Codex**, then `codex mcp list`. | Assume exporting `JFROG_PLATFORM_URL` will register MCP. Codex reads the host from `.mcp.json`. |
+| `jfrog-init` stopped at CLI/auth | Follow the skill prompt (`jf config add`, web login, or token path), then **re-run `jfrog-init`**. | Skip init and only export env vars. |
+| Placeholder still in `.mcp.json` | Set the host in `<install-path>/.mcp.json`, run `codex mcp login jfrog`, restart Codex. | Reinstall the plugin when only the host placeholder is wrong. |
+| Plugin not listed | Re-run `codex plugin add jfrog@codex-plugin` from a regular terminal, then restart Codex. | Run install commands from inside the Codex TUI. |
+
+---
+
 ## Usage
 
 Once configured, interact with the JFrog plugin through natural language.
