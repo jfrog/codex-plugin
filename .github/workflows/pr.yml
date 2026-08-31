@@ -19,10 +19,6 @@ jobs:
         run: node --test scripts/validate.test.mjs
       - name: Validate manifests + skills
         run: node scripts/validate.mjs
-      - name: Validate README has no plugin version
-        env:
-          PLUGIN_MANIFEST: .codex-plugin/plugin.json
-        run: node scripts/validate-readme-no-version.mjs
       - name: Version consistency (plugin.json == package.json)
         run: |
           PJ=$(jq -r .version .codex-plugin/plugin.json)

@@ -6,11 +6,14 @@ The skill packages under `skills/` are vendored from **[jfrog/jfrog-skills](http
 | --- | --- |
 | **Repository** | https://github.com/jfrog/jfrog-skills |
 | **Pinned release** | see `pin` in [`scripts/sync-skills-vendor.json`](scripts/sync-skills-vendor.json) |
+| **Plugin version** | see `version` in [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json) and [`package.json`](package.json) |
 
 Included skill directories (as of the pinned release): `jfrog/`,
 `jfrog-package-safety-and-download/`, `jfrog-setup-package-managers/`,
 `jfrog-ai-catalog-skills/`, `jfrog-mcp-management/` (JFrog Agent Guard MCP
 management, including the Codex harness), and `jfrog-reference-architecture/`.
+
+The README deliberately omits release numbers. The matching manifests and GitHub tags/releases are the authoritative plugin-version sources; the vendor configuration is the authoritative skills pin.
 
 ## Refreshing
 
