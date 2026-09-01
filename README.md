@@ -93,9 +93,9 @@ Restart Codex; the `jfrog` MCP server and its tools are now available (verify wi
 
 ## Verify
 
-Verification is a required install step, not a troubleshooting fallback. Run the
-`codex …` commands below in a regular terminal; `/` commands are typed inside the
-Codex TUI. After restarting Codex, confirm:
+Verify your installation right after setup. Run the `codex …` commands below in a
+regular terminal; `/` commands are typed inside the Codex TUI. After restarting
+Codex, confirm:
 
 1. **Plugin is installed and enabled:**
 
@@ -140,8 +140,7 @@ Examples are grouped by capability.
 
 ### Discovering and invoking skills
 
-Skills don't appear when you type `/` — that menu lists Codex commands. Reach the
-JFrog skills three ways:
+Reach the JFrog skills three ways:
 
 - **`/skills`** — opens the Skills menu; choose **List skills** to browse and run
   one. Tip: press `@` to open the skills list directly.
