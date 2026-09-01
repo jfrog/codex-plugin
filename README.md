@@ -78,7 +78,7 @@ on this machine:
 The plugin bundles the `jfrog` MCP server ([`.mcp.json`](.mcp.json)). After
 installing, do two things:
 
-1. **Set your host.** In a regular terminal, find the install path with
+1. **Set your host.** Outside Codex, in your terminal, find the install path with
    `codex plugin list | grep jfrog@codex-plugin`; the `PATH` column is your
    `<PATH>`. Edit `<PATH>/.mcp.json` and replace `<JFROG_PLATFORM_URL>` in the
    `url` with your full JFrog Platform host — e.g. `mycompany.jfrog.io` (or your
@@ -93,9 +93,9 @@ Restart Codex; the `jfrog` MCP server and its tools are now available (verify wi
 
 ## Verify
 
-Verify your installation right after setup. Run the `codex …` commands below in a
-regular terminal; `/` commands are typed inside the Codex TUI. After restarting
-Codex, confirm:
+Verify your installation right after setup. Run the `codex …` commands below in
+your terminal, outside Codex; `/` commands are typed inside the Codex TUI. After
+restarting Codex, confirm:
 
 1. **Plugin is installed and enabled:**
 
@@ -129,7 +129,7 @@ by hand does not repair a failed initialization — re-run `jfrog-init` instead.
 | MCP missing after install | Run `jfrog-init`, edit the plugin `.mcp.json` host if needed, run `codex mcp login jfrog`, **restart Codex**, then `codex mcp list`. | Assume exporting `JFROG_PLATFORM_URL` will register MCP. Codex reads the host from `.mcp.json`. |
 | `jfrog-init` stopped at CLI/auth | Follow the skill prompt (`jf config add`, web login, or token path), then **re-run `jfrog-init`**. | Skip init and only export env vars. |
 | Placeholder still in `.mcp.json` | Set the host in `<install-path>/.mcp.json`, run `codex mcp login jfrog`, restart Codex. | Reinstall the plugin when only the host placeholder is wrong. |
-| Plugin not listed | Re-run `codex plugin add jfrog@codex-plugin` from a regular terminal, then restart Codex. | Run install commands from inside the Codex TUI. |
+| Plugin not listed | Re-run `codex plugin add jfrog@codex-plugin` outside Codex, then restart Codex. | Run install commands from inside the Codex TUI. |
 
 ---
 
