@@ -11,7 +11,7 @@ The JFrog plugin provides the following capabilities, grouped by component:
 | --- | --- | --- |
 | **MCP** | JFrog MCP server | Bundled `jfrog` MCP server ([`.mcp.json`](.mcp.json)) at `https://<JFROG_PLATFORM_URL>/mcp`; this server signs in via OAuth (`codex mcp login jfrog`), so it needs no API key. |
 | **Skill** | JFrog Platform | Interact with Artifactory repositories, builds, permissions, users, access tokens, projects, release bundles, and platform administration via the JFrog CLI and REST/GraphQL APIs. Also covers security audits, CVE lookups, and Advanced Security exposure queries. |
-| **Skill** | Package safety & download | Check whether npm, Maven, PyPI, Go, and other packages are safe, curated, or allowed, then download them through Artifactory remote caches or curation-aware package managers. |
+| **Skill** | Package curation | Check whether npm, Maven, PyPI, Go, and other packages are safe, curated, or allowed, then download them through Artifactory remote caches or curation-aware package managers. |
 | **Skill** | Agent Guard | Codex manages MCPs through the JFrog Agent Guard. Through the Agent Guard you can discover, install, configure, update, and remove MCP servers from the JFrog AI Catalog approved for your project, and authenticate to remote HTTP MCPs via OAuth, API key, or bearer token. |
 
 ---
@@ -90,6 +90,32 @@ Restart Codex; the `jfrog` MCP server and its tools are now available (verify wi
 
 ---
 
+## Verify
+
+Verification is a required install step, not a troubleshooting fallback. After
+restarting Codex, confirm all four:
+
+1. `codex plugin list` — `jfrog@codex-plugin` is installed and enabled.
+2. `/plugins` in the Codex TUI — the JFrog plugin lists its skills (`jfrog` and others).
+3. `codex mcp list` — `jfrog` is connected (after `codex mcp login jfrog`).
+4. `jf rt ping` — succeeds against your configured JFrog server.
+
+If any check fails, see [Recovery](#recovery). Setting MCP environment variables
+by hand does not repair a failed initialization — re-run `jfrog-init` instead.
+
+---
+
+## Recovery
+
+| Symptom | Do this | Do **not** do this |
+| --- | --- | --- |
+| MCP missing after install | Run `jfrog-init`, edit the plugin `.mcp.json` host if needed, run `codex mcp login jfrog`, **restart Codex**, then `codex mcp list`. | Assume exporting `JFROG_PLATFORM_URL` will register MCP. Codex reads the host from `.mcp.json`. |
+| `jfrog-init` stopped at CLI/auth | Follow the skill prompt (`jf config add`, web login, or token path), then **re-run `jfrog-init`**. | Skip init and only export env vars. |
+| Placeholder still in `.mcp.json` | Set the host in `<install-path>/.mcp.json`, run `codex mcp login jfrog`, restart Codex. | Reinstall the plugin when only the host placeholder is wrong. |
+| Plugin not listed | Re-run `codex plugin add jfrog@codex-plugin` from a regular terminal, then restart Codex. | Run install commands from inside the Codex TUI. |
+
+---
+
 ## Usage
 
 Once configured, interact with the JFrog plugin through natural language.
@@ -106,7 +132,7 @@ Examples are grouped by capability.
 | "Create a scoped access token for CI." | Creates an access token with the requested scope. |
 | "Promote this release bundle to production." | Uses Lifecycle / Distribution APIs to promote the bundle. |
 
-### Package safety & download skill
+### Package curation skill
 
 | Ask the agent… | What happens |
 | --- | --- |
