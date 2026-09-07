@@ -1,0 +1,32 @@
+# Copyright (c) JFrog Ltd. 2026
+name: Validate version
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # plugin.json is canonical; package.json carries its own copy. This check keeps them
+      # in step so a release can't ship two different version numbers.
+      - name: Check version consistency
+        run: |
+          set -euo pipefail
+          VERSION=$(jq -er '.version' .codex-plugin/plugin.json)
+          PK_VERSION=$(jq -er '.version' package.json)
+          if [ "$VERSION" != "$PK_VERSION" ]; then
+            echo "::error::Version mismatch: .codex-plugin/plugin.json is $VERSION but package.json is $PK_VERSION"
+            exit 1
+          fi
+          if ! printf '%s' "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::.codex-plugin/plugin.json version '$VERSION' is not X.Y.Z"
+            exit 1
+          fi
+          echo "Versions consistent: $VERSION"

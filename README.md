@@ -216,8 +216,8 @@ To pull a newer upstream release into this repo:
 3. Bump `version` in both [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json)
    and [`package.json`](package.json) (they must match — CI enforces this) so the
    published plugin reflects the new skills bundle.
-4. Commit the pin bump, the regenerated `skills/` tree, and the version bump together, and open a PR whose merge commit subject carries a
-   `[patch]` / `[minor]` / `[major]` marker (see [Releasing](#releasing)).
+4. Commit the pin bump, the regenerated `skills/` tree, and the version bump
+   together, and open a PR (see [Releasing](#releasing)).
 
 See [`VENDOR.md`](VENDOR.md) for the full picture.
 
@@ -226,12 +226,11 @@ See [`VENDOR.md`](VENDOR.md) for the full picture.
 ## Releasing
 
 Releases are cut automatically by [`.github/workflows/release.yml`](.github/workflows/release.yml)
-when a commit lands on `main` whose **subject line** contains a
-`[major]` / `[minor]` / `[patch]` marker. The workflow reads the version from
-`.codex-plugin/plugin.json` (cross-checked against `package.json`), refuses to
-re-release an existing tag, and publishes a GitHub Release `v<version>` with a
-zipped artifact. A version is released only when both a manifest bump **and** a
-marker commit reach `main`.
+when a commit lands on `main` with a version in `.codex-plugin/plugin.json` that is newer than
+the latest release tag (cross-checked against `package.json`). The workflow publishes a GitHub
+Release `v<version>` with a zipped artifact. Every merge to `main` must bump both manifests —
+a commit that lands without a bump fails the workflow instead of releasing. See
+[CONTRIBUTING.md](CONTRIBUTING.md#releasing) for the full flow.
 
 ---
 
