@@ -78,10 +78,11 @@ on this machine:
 The plugin bundles the `jfrog` MCP server ([`.mcp.json`](.mcp.json)). After
 installing, do two things:
 
-1. **Set your host.** Find the install path with `codex plugin list` (the
-   `jfrog@codex-plugin` row) and edit `<PATH>/.mcp.json`. Replace
-   `<JFROG_PLATFORM_URL>` in the `url` with your full JFrog Platform host — e.g.
-   `mycompany.jfrog.io` (or your self-hosted / custom domain).
+1. **Set your host.** Outside Codex, in your terminal, find the install path with
+   `codex plugin list | grep jfrog@codex-plugin`; the `PATH` column is your
+   `<PATH>`. Edit `<PATH>/.mcp.json` and replace `<JFROG_PLATFORM_URL>` in the
+   `url` with your full JFrog Platform host — e.g. `mycompany.jfrog.io` (or your
+   self-hosted / custom domain).
 2. **Log in (OAuth).** Run `codex mcp login jfrog` and finish the browser
    sign-in.
 
@@ -92,13 +93,29 @@ Restart Codex; the `jfrog` MCP server and its tools are now available (verify wi
 
 ## Verify
 
-Verification is a required install step, not a troubleshooting fallback. After
-restarting Codex, confirm all four:
+Verify your installation right after setup. Run the `codex …` commands below in
+your terminal, outside Codex; `/` commands are typed inside the Codex TUI. After
+restarting Codex, confirm:
 
-1. `codex plugin list` — `jfrog@codex-plugin` is installed and enabled.
-2. `/plugins` in the Codex TUI — the JFrog plugin lists its skills (`jfrog` and others).
-3. `codex mcp list` — `jfrog` is connected (after `codex mcp login jfrog`).
-4. `jf rt ping` — succeeds against your configured JFrog server.
+1. **Plugin is installed and enabled:**
+
+   ```bash
+   codex plugin list | grep jfrog@codex-plugin
+   ```
+
+   You should see the `jfrog@codex-plugin` row reporting `installed, enabled`,
+   with its version and install path:
+
+   ```text
+   jfrog@codex-plugin  installed, enabled  <VERSION>  <PATH>
+   ```
+
+   If the row is missing or shows `not installed`, see [Recovery](#recovery).
+
+2. **Skills are discoverable** — in the Codex TUI, type `/skills` and confirm the
+   JFrog skills appear. See [Discovering and invoking skills](#discovering-and-invoking-skills).
+3. **MCP server is connected** — run `codex mcp list` and confirm `jfrog` is
+   connected (after `codex mcp login jfrog`).
 
 If any check fails, see [Recovery](#recovery). Setting MCP environment variables
 by hand does not repair a failed initialization — re-run `jfrog-init` instead.
@@ -112,7 +129,7 @@ by hand does not repair a failed initialization — re-run `jfrog-init` instead.
 | MCP missing after install | Run `jfrog-init`, edit the plugin `.mcp.json` host if needed, run `codex mcp login jfrog`, **restart Codex**, then `codex mcp list`. | Assume exporting `JFROG_PLATFORM_URL` will register MCP. Codex reads the host from `.mcp.json`. |
 | `jfrog-init` stopped at CLI/auth | Follow the skill prompt (`jf config add`, web login, or token path), then **re-run `jfrog-init`**. | Skip init and only export env vars. |
 | Placeholder still in `.mcp.json` | Set the host in `<install-path>/.mcp.json`, run `codex mcp login jfrog`, restart Codex. | Reinstall the plugin when only the host placeholder is wrong. |
-| Plugin not listed | Re-run `codex plugin add jfrog@codex-plugin` from a regular terminal, then restart Codex. | Run install commands from inside the Codex TUI. |
+| Plugin not listed | Re-run `codex plugin add jfrog@codex-plugin` outside Codex, then restart Codex. | Run install commands from inside the Codex TUI. |
 
 ---
 
@@ -120,6 +137,19 @@ by hand does not repair a failed initialization — re-run `jfrog-init` instead.
 
 Once configured, interact with the JFrog plugin through natural language.
 Examples are grouped by capability.
+
+### Discovering and invoking skills
+
+Reach the JFrog skills three ways:
+
+- **`/skills`** — opens the Skills menu; choose **List skills** to browse and run
+  one. Tip: press `@` to open the skills list directly.
+- **`@`** — type `@` followed by a skill name to mention it inline (e.g.
+  `@jfrog`, `@jfrog-package-curation`).
+- **Natural language** — just describe your task; Codex picks a matching skill by
+  its `description` (the examples below work this way).
+
+If a newly installed skill doesn't show up, restart Codex so it re-scans plugins.
 
 ### JFrog Platform skill
 
