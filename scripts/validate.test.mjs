@@ -1,9 +1,10 @@
 // (c) JFrog Ltd. (2026)
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   extractFrontmatter,
   parseField,
@@ -13,6 +14,8 @@ import {
   validateMarketplace,
   validateMcp,
 } from './validate.mjs';
+
+const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 function writeSkill(root, dir, body) {
   mkdirSync(join(root, dir), { recursive: true });
@@ -81,6 +84,23 @@ test('validateMcp accepts direct and wrapped server maps, flags servers without 
   assert.deepEqual(validateMcp({ local: { command: 'node', args: ['s.js'] } }), []);
   assert.ok(validateMcp({}).some((e) => e.includes('no MCP servers')));
   assert.ok(validateMcp({ jfrog: {} }).some((e) => e.includes('url') && e.includes('command')));
+});
+
+test('APR SessionStart hook is the Codex plugin command with a 4000-token context limit', () => {
+  assert.equal(existsSync(join(repoRoot, 'plugin.json')), false);
+  const hooks = JSON.parse(readFileSync(join(repoRoot, 'hooks/hooks.json'), 'utf8'));
+  const cmd = hooks.hooks.SessionStart[0].hooks[0];
+  assert.equal(
+    cmd.command,
+    'node "${PLUGIN_ROOT}/modules/codex-session-start.mjs" package-resolution',
+  );
+  assert.equal(cmd.type, 'command');
+  assert.equal(cmd.timeout, 7);
+  assert.equal(cmd.additionalContextLimit, 4000);
+  const manifest = JSON.parse(readFileSync(join(repoRoot, '.codex-plugin/plugin.json'), 'utf8'));
+  assert.equal(manifest.hooks, './hooks/hooks.json');
+  assert.ok(manifest.keywords.includes('package-resolution'));
+  assert.ok(existsSync(join(repoRoot, 'modules/codex-session-start.mjs')));
 });
 
 test('validateMarketplace requires a local source with a ./ path', () => {

@@ -14,10 +14,12 @@
     "codex",
     "plugin",
     "skills",
-    "mcp"
+    "mcp",
+    "package-resolution"
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
+  "hooks": "./hooks/hooks.json",
   "interface": {
     "displayName": "JFrog",
     "shortDescription": "JFrog Platform skills for Codex",
