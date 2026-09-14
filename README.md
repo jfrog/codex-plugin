@@ -12,6 +12,7 @@ The JFrog plugin provides the following capabilities, grouped by component:
 | **MCP** | JFrog MCP server | Bundled `jfrog` MCP server ([`.mcp.json`](.mcp.json)) at `https://<JFROG_PLATFORM_URL>/mcp`; this server signs in via OAuth (`codex mcp login jfrog`), so it needs no API key. |
 | **Skill** | JFrog Platform | Interact with Artifactory repositories, builds, permissions, users, access tokens, projects, release bundles, and platform administration via the JFrog CLI and REST/GraphQL APIs. Also covers security audits, CVE lookups, and Advanced Security exposure queries. |
 | **Skill** | Package curation | Check whether npm, Maven, PyPI, Go, and other packages are safe, curated, or allowed, then download them through Artifactory remote caches or curation-aware package managers. |
+| **Hook + Skill** | Agent Package Resolution (Preview) | Automatically route packages installed by the AI agent through your organization's JFrog Artifactory, keeping agent-driven installs inside your Curation, Xray, and governance perimeter. |
 | **Skill** | Agent Guard | Codex manages MCPs through the JFrog Agent Guard. Through the Agent Guard you can discover, install, configure, update, and remove MCP servers from the JFrog AI Catalog approved for your project, and authenticate to remote HTTP MCPs via OAuth, API key, or bearer token. |
 
 ---
@@ -41,7 +42,10 @@ codex plugin marketplace add jfrog/codex-plugin
 codex plugin add jfrog@codex-plugin
 ```
 
-Browse installed plugins in the Codex TUI with `/plugins`.
+Browse installed plugins in the Codex TUI with `/plugins`. Installing the plugin
+does **not** trust the SessionStart hook — restart Codex, run `/hooks`, and
+trust the JFrog Package Resolution command. ChatGPT **web** does not run hook
+scripts.
 
 ### Local development
 
@@ -116,9 +120,14 @@ restarting Codex, confirm:
    JFrog skills appear. See [Discovering and invoking skills](#discovering-and-invoking-skills).
 3. **MCP server is connected** — run `codex mcp list` and confirm `jfrog` is
    connected (after `codex mcp login jfrog`).
+4. **SessionStart hook is trusted** — `/hooks` lists the JFrog Package Resolution
+   command as trusted. Without that, Agent Package Resolution does not inject.
+5. **`jf rt ping`** — succeeds against your configured server (required for
+   routing mode).
 
 If any check fails, see [Recovery](#recovery). Setting MCP environment variables
-by hand does not repair a failed initialization — re-run `jfrog-init` instead.
+by hand does not repair a failed MCP initialization — re-run `jfrog-init`
+instead. An untrusted SessionStart hook is a `/hooks` step, not an init failure.
 
 ---
 
@@ -130,6 +139,24 @@ by hand does not repair a failed initialization — re-run `jfrog-init` instead.
 | `jfrog-init` stopped at CLI/auth | Follow the skill prompt (`jf config add`, web login, or token path), then **re-run `jfrog-init`**. | Skip init and only export env vars. |
 | Placeholder still in `.mcp.json` | Set the host in `<install-path>/.mcp.json`, run `codex mcp login jfrog`, restart Codex. | Reinstall the plugin when only the host placeholder is wrong. |
 | Plugin not listed | Re-run `codex plugin add jfrog@codex-plugin` outside Codex, then restart Codex. | Run install commands from inside the Codex TUI. |
+| `/hooks` shows the Package Resolution command as untrusted, or no Artifactory routing in a new session | Restart Codex, open `/hooks`, and trust the exact command. A later change to the hook definition requires trust again. | Assume `codex plugin add` approved the hook. Do not use `--dangerously-bypass-hook-trust` as the normal path. |
+| ChatGPT web never routes installs | Use Codex CLI or the ChatGPT desktop Codex surface. | Expect hook scripts to run on ChatGPT web. |
+| `modules/` missing after a local checkout | Use a published release or re-sync with `JFROG_AGENT_HOOKS_PATH=… node .github/scripts/sync-modules.mjs`. | Hand-edit files under `modules/`. |
+
+---
+
+## Agent Package Resolution (Preview)
+
+> **Preview Notice:** This feature is in preview and licensed under the Apache License 2.0. For clarity: This software is provided "as-is" without warranty of any kind, and without support obligations or service level commitments. Behavior, APIs, conventions, and structure may change without notice between releases. JFrog makes no guarantees of backward compatibility during the preview release cycle. Use in production environments is at your own risk.
+
+The plugin can now automatically route the packages your AI agent installs (npm, PyPI, Maven, Go, Docker, Helm, and NuGet) through your organization's JFrog Artifactory instead of public registries. This keeps agent-driven dependency installs inside your organization's governance perimeter.
+
+Agent Package Resolution is in preview. The shipped template enables it with empty repository bindings (nothing is routed until Consent Enable or an admin adds `defaultGlobalRepos`). To get started:
+
+- **Users:** see the [User Guide](docs/package-resolution-user-guide.md).
+- **Admins:** see the [Admin Guide](docs/package-resolution-admin-guide.md).
+
+Installing the plugin does not skip `/hooks` trust. ChatGPT **web** does not run the SessionStart hook.
 
 ---
 
@@ -169,6 +196,16 @@ If a newly installed skill doesn't show up, restart Codex so it re-scans plugins
 | "Is `lodash@4.17.21` safe to install?" | Checks JFrog Public Catalog signals and curation policy for the package. |
 | "Is this Maven package approved for use?" | Checks curation entitlement and policy for the requested package. |
 | "Download `requests` via JFrog." | Resolves the package through an Artifactory remote cache or curation-aware package manager. |
+
+### Agent Package Resolution
+
+When Agent Package Resolution is enabled and configured, no special prompt syntax is required. Ask the agent to install or use a package as you normally would, and the plugin routes supported package operations through your organization's Artifactory.
+
+| Ask the agent…                         | What happens                                                             |
+| -------------------------------------- | ------------------------------------------------------------------------ |
+| "Add `lodash` to this project."        | Resolves the npm package through the configured Artifactory repository.  |
+| "Add Excel file import to this app."   | The agent selects a suitable package and resolves it through the configured Artifactory repository. |
+| "Pull the `alpine` Docker image."      | Pulls the image through the configured Artifactory Docker repository.    |
 
 ### MCP server management (Agent Guard)
 
@@ -220,6 +257,19 @@ To pull a newer upstream release into this repo:
    together, and open a PR (see [Releasing](#releasing)).
 
 See [`VENDOR.md`](VENDOR.md) for the full picture.
+
+### Updating the vendored modules
+
+The `modules/` tree is vendored from GHE `jfrog-agent-hooks` at the pin in
+[`.github/scripts/sync-modules-vendor.json`](.github/scripts/sync-modules-vendor.json).
+Automated `chore/sync-modules-v*` PRs replace that tree. To refresh locally:
+
+```bash
+JFROG_AGENT_HOOKS_PATH=/path/to/jfrog-agent-hooks node .github/scripts/sync-modules.mjs
+```
+
+Do not hand-edit files under `modules/`. `hooks/hooks.json` is owned by this
+repo and is not part of the vendor slice.
 
 ---
 

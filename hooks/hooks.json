@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/modules/codex-session-start.mjs\" package-resolution",
+            "timeout": 7,
+            "additionalContextLimit": 4000,
+            "statusMessage": "Routing package installs through JFrog Artifactory…"
+          }
+        ]
+      }
+    ]
+  }
+}

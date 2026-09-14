@@ -32,3 +32,26 @@ node scripts/sync-skills.mjs
 ```
 
 The script reads its sibling [`sync-skills-vendor.json`](scripts/sync-skills-vendor.json), downloads the pinned upstream tarball from `codeload.github.com`, and replaces the directories listed in `paths` (today: `skills/`).
+
+---
+
+# Vendored modules
+
+The `modules/` bundle is vendored from **jfrog-agent-hooks** (GHE) and committed to `main`.
+
+| | |
+| --- | --- |
+| **Repository** | `github.jfrog.info/JFROG/jfrog-agent-hooks` |
+| **Pinned release** | see `pin` in [`.github/scripts/sync-modules-vendor.json`](.github/scripts/sync-modules-vendor.json) |
+
+The bundle contains harness runners (`core/`, `*-session-start.mjs`), the `package-resolution/` capability, and `assets/agents-default-conf.json`. Automated sync PRs (`chore/sync-modules-v*`) update this tree on each `jfrog-agent-hooks` release.
+
+`hooks/hooks.json` is **not** part of the vendor slice. Sync replaces `modules/` only; this plugin owns the Codex SessionStart assembly (APR only — no Agent Guard / MCP-align scripts).
+
+## Refreshing modules
+
+```bash
+JFROG_AGENT_HOOKS_PATH=/path/to/jfrog-agent-hooks node .github/scripts/sync-modules.mjs
+```
+
+The script reads `paths` from `sync-modules-vendor.json` (today: `["modules"]`) and replaces the whole `modules/` tree. After a local refresh, stamp `PKG_VERSION` and the pin with the official copy script if you are matching a Sync Plugins drop. A hand refresh copies bytes only; it does not bump plugin versions.
