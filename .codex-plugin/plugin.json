@@ -1,6 +1,6 @@
 {
   "name": "jfrog",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "description": "JFrog skills and the JFrog MCP server for Codex \u2014 interact with the JFrog Platform.",
   "author": {
     "name": "JFrog",
@@ -14,10 +14,12 @@
     "codex",
     "plugin",
     "skills",
-    "mcp"
+    "mcp",
+    "package-resolution"
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
+  "hooks": "./hooks/hooks.json",
   "interface": {
     "displayName": "JFrog",
     "shortDescription": "JFrog Platform skills for Codex",
