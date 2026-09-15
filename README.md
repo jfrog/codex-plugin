@@ -122,8 +122,7 @@ restarting Codex, confirm:
    connected (after `codex mcp login jfrog`).
 4. **SessionStart hook is trusted** — `/hooks` lists the JFrog Package Resolution
    command as trusted. Without that, Agent Package Resolution does not inject.
-5. **`jf rt ping`** — succeeds against your configured server (required for
-   routing mode).
+5. `jf rt ping` — succeeds against your configured server.
 
 If any check fails, see [Recovery](#recovery). Setting MCP environment variables
 by hand does not repair a failed MCP initialization — re-run `jfrog-init`
@@ -141,7 +140,6 @@ instead. An untrusted SessionStart hook is a `/hooks` step, not an init failure.
 | Plugin not listed | Re-run `codex plugin add jfrog@codex-plugin` outside Codex, then restart Codex. | Run install commands from inside the Codex TUI. |
 | `/hooks` shows the Package Resolution command as untrusted, or no Artifactory routing in a new session | Restart Codex, open `/hooks`, and trust the exact command. A later change to the hook definition requires trust again. | Assume `codex plugin add` approved the hook. Do not use `--dangerously-bypass-hook-trust` as the normal path. |
 | ChatGPT web never routes installs | Use Codex CLI or the ChatGPT desktop Codex surface. | Expect hook scripts to run on ChatGPT web. |
-| `modules/` missing after a local checkout | Use a published release or re-sync with `JFROG_AGENT_HOOKS_PATH=… node .github/scripts/sync-modules.mjs`. | Hand-edit files under `modules/`. |
 
 ---
 
