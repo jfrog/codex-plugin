@@ -34,7 +34,7 @@ After `codex plugin add jfrog@codex-plugin`:
 
 The hook command uses `${PLUGIN_ROOT}` (Codex also sets `CLAUDE_PLUGIN_ROOT` for compatibility). Local `make install-codex` from `jfrog-agent-hooks` writes a different command into `~/.codex/hooks.json`; that trust hash does **not** cover the plugin definition. Uninstall the local hook before smoke-testing the plugin so you are not approving two SessionStart entries.
 
-The shipped template turns Agent Package Resolution **on** (`enabled: true`) with empty `defaultGlobalRepos`. Nothing is routed until Consent Enable or an administrator adds bindings. Set `enabled: false` or `JF_AGENT_PACKAGE_RESOLUTION_DISABLE=1` to keep it off.
+The shipped template turns Agent Package Resolution **on** (`enabled: true`) with empty `defaultGlobalRepos`. Nothing is routed until Consent Enable or an administrator adds bindings. `JF_AGENT_PACKAGE_RESOLUTION_DISABLE=1` always keeps it off; `enabled: false` alone only keeps it off if you deploy your own `agents-conf.json` — on the plugin's auto-created default file it is not durable (see below).
 
 **At a glance:**
 
