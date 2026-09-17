@@ -4,7 +4,7 @@ Route AI-assisted package installs through your JFrog Artifactory repositories w
 
 Agent Package Resolution runs at the start of each agent session. When enabled, it injects routing policy and resolved Artifactory URLs into the session so the agent prefers your repositories over public registries. Durable enforcement still comes from **package manager configuration** (`jf setup`) and **JFrog Curation** on the server.
 
-This guide is for **platform administrators** and **developers** onboarding the JFrog coding-agent plugins. For installing the plugin itself, see the JFrog documentation for your IDE ([Cursor](https://docs.jfrog.com/ai-ml/docs/cursor), [Claude Code](https://docs.jfrog.com/ai-ml/docs/claude-code/), [VS Code](https://docs.jfrog.com/ai-ml/docs/vs-code)) or this repository's [README](../README.md) for **Codex**.
+This guide is for **platform administrators** and **developers** onboarding the JFrog coding-agent plugins. For installing the plugin itself, see the JFrog documentation for your IDE ([Cursor](https://docs.jfrog.com/ai-ml/docs/cursor), [Claude Code](https://docs.jfrog.com/ai-ml/docs/claude-code/), [VS Code](https://docs.jfrog.com/ai-ml/docs/vs-code)) or the [Codex plugin README](https://github.com/jfrog/codex-plugin#installation) for Codex.
 
 > **Related:** [Use the MCP Registry with Agent Guard](https://docs.jfrog.com/ai-ml/docs/configure-coding-agents) covers MCP governance. Agent Package Resolution is a separate capability in the same JFrog plugin family and uses the same local configuration file for admin settings.
 
@@ -12,14 +12,13 @@ This guide is for **platform administrators** and **developers** onboarding the 
 
 ## Setup summary
 
-| Step | Action                                                                                                     |
-| ---- | ---------------------------------------------------------------------------------------------------------- |
-| 1    | Install the JFrog plugin in your coding assistant                                                          |
-| 2    | Install and configure the JFrog CLI (`jf config add`) — required for **routing** mode                      |
-| 3    | Confirm `~/.jfrog/agents-conf.json` (shipped template enables APR with empty bindings; or deploy your own) |
-| 4    | **Codex:** restart, then `/hooks` and trust the SessionStart command (plugin install does not skip this)   |
-| 5    | Start a **new agent session** — policy and URLs are injected once per session                              |
-
+| Step | Action                                                                                                                    |
+| ---- | ------------------------------------------------------------------------------------------------------------------------- |
+| 1    | Install the JFrog plugin in your coding assistant                                                                         |
+| 2    | Install and configure the JFrog CLI (`jf config add`) — required for **routing** mode                                     |
+| 3    | If an administrator pre-deployed `.jfrog/agents-conf.json`, confirm it; otherwise continue—the first session creates it    |
+| 4    | **Codex:** after install, restart, then `/hooks` and trust the SessionStart command (plugin install does not skip this — see the [Codex plugin README](https://github.com/jfrog/codex-plugin#installation)) |
+| 5    | Start a **new agent session** — missing config is created, then policy and URLs are injected once per session               |
 
 ### Codex install and hook trust
 
@@ -35,15 +34,13 @@ After `codex plugin add jfrog@codex-plugin`:
 
 The hook command uses `${PLUGIN_ROOT}` (Codex also sets `CLAUDE_PLUGIN_ROOT` for compatibility). Local `make install-codex` from `jfrog-agent-hooks` writes a different command into `~/.codex/hooks.json`; that trust hash does **not** cover the plugin definition. Uninstall the local hook before smoke-testing the plugin so you are not approving two SessionStart entries.
 
-The shipped template turns Agent Package Resolution **on** (`enabled: true`) with empty `defaultGlobalRepos`. Nothing is routed until Consent Enable or an administrator adds bindings. Set `enabled: false` or `JF_AGENT_PACKAGE_RESOLUTION_DISABLE=1` to keep it off.
-
+The shipped template turns Agent Package Resolution **on** (`enabled: true`) with empty `defaultGlobalRepos`. Nothing is routed until Consent Enable or an administrator adds bindings. `JF_AGENT_PACKAGE_RESOLUTION_DISABLE=1` always keeps it off; `enabled: false` alone only keeps it off if you deploy your own `agents-conf.json` — on the plugin's auto-created default file it is not durable (see below).
 
 **At a glance:**
 
 - **Default:** on, but routes nothing until you add repositories.
 - **To route installs:** add repository keys under `defaultGlobalRepos` (org config or Consent Enable).
 - **To turn it off org-wide:** deploy your own `agents-conf.json` with `"enabled": false` (see [Turning Agent Package Resolution off](#turning-agent-package-resolution-off-admins)). Setting `"enabled": false` on the plugin's **default file without also deploying your own** is not durable — the plugin re-enables it on the next session.
-
 
 ---
 
@@ -151,9 +148,6 @@ the `jfrog` skill + `verify-repo`, or manually — see
 With default `verifyRepos: true`, Consent Enable / `configure.mjs enable` accepts
 keys Artifactory confirms as virtual repositories of the requested package type.
 
----
-
-
 ### Turning Agent Package Resolution off (admins)
 
 > **Why `enabled: false` alone may not stick.** Because the feature now ships **on**, the plugin re-enables its **own default file** if it finds it still turned off. "Default file" means the `agents-conf.json` the plugin auto-created and that no one has changed except (at most) the `enabled` flag. As soon as you deploy your **own** config, or add any other setting (like `onboardingPrompt`), the plugin treats it as yours and never re-enables it.
@@ -179,6 +173,8 @@ keys Artifactory confirms as virtual repositories of the requested package type.
 
 Setting **only** `"onboardingPrompt": "off"` stops the Consent Enable prompts but does **not** turn the feature off — leave `enabled: false` in place for that. See also [emergency disable](#environment-variable-emergency-disable) for the environment variable.
 
+---
+
 ## Admin control: deploy `agents-conf.json` across your organization
 
 Use standard endpoint management to place a consistent `agents-conf.json` on every developer machine.
@@ -200,8 +196,6 @@ Use standard endpoint management to place a consistent `agents-conf.json` on eve
 | Auto-configure package managers at first session | Add types to `autoSetup` ([Zero-touch setup](#zero-touch-setup-autosetup))                                                                                   |
 | Force all cached state to refresh                | Set `"cacheTtlDays": 0` (this also re-runs eligible zero-touch `jf setup` each session), or edit `agents-conf.json`                                          |
 | Support troubleshooting                          | Set `"logLevel": "debug"` temporarily; logs go to `~/.jfrog/logs/agent-hooks.log`                                                                            |
-| Keep APR **off** (durable)                       | Deploy your own file with `"enabled": false`, **or** set `"enabled": false` **and** `"onboardingPrompt": "off"` on the plugin's default file — see [Turning off](#turning-agent-package-resolution-off-admins) |
-| Silence Consent Enable offers only               | Set `"onboardingPrompt": "off"` (does not disable APR while `enabled` is `true`)                                                                             |
 
 ---
 
@@ -529,5 +523,5 @@ Workspace values win over `agents-conf.json` for matching types during that sess
 - [Install JFrog Plugin for Cursor](https://docs.jfrog.com/ai-ml/docs/install-jfrog-plugin-for-cursor)
 - [Install JFrog Plugin for Claude Code](https://docs.jfrog.com/ai-ml/docs/install-jfrog-plugin-for-claude-code)
 - [Install JFrog Plugin for VS Code](https://docs.jfrog.com/ai-ml/docs/install-jfrog-plugin-for-vs-code)
-- [Install the JFrog plugin for Codex](../README.md#installation)
+- [Install JFrog Plugin for Codex](https://github.com/jfrog/codex-plugin#installation)
 - [Use the MCP Registry with Agent Guard](https://docs.jfrog.com/ai-ml/docs/configure-coding-agents)
