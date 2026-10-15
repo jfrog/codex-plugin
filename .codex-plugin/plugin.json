@@ -1,6 +1,6 @@
 {
   "name": "jfrog",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "description": "JFrog skills and the JFrog MCP server for Codex \u2014 interact with the JFrog Platform.",
   "author": {
     "name": "JFrog",
